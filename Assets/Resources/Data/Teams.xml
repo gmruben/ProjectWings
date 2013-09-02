@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Data>
+  
+	<Team>
+		<Name>Nankatsu</Name>
+		
+		<Player>
+			<Name>Player 1</Name>
+			<TileX>0</TileX>
+			<TileY>6</TileY>
+		</Player>
+
+		<Player>
+			<Name>Player 2</Name>
+			<TileX>3</TileX>
+			<TileY>5</TileY>
+		</Player>
+		
+		<Player>
+			<Name>Player 3</Name>
+			<TileX>3</TileX>
+			<TileY>7</TileY>
+		</Player>
+
+		<Player>
+			<Name>Player 4</Name>
+			<TileX>4</TileX>
+			<TileY>2</TileY>
+		</Player>
+		
+		<Player>
+			<Name>Player 5</Name>
+			<TileX>4</TileX>
+			<TileY>10</TileY>
+		</Player>
+		
+		<Player>
+			<Name>Player 6</Name>
+			<TileX>6</TileX>
+			<TileY>4</TileY>
+		</Player>
+		
+		<Player>
+			<Name>Player 7</Name>
+			<TileX>6</TileX>
+			<TileY>8</TileY>
+		</Player>
+		
+		<Player>
+			<Name>Player 8</Name>
+			<TileX>7</TileX>
+			<TileY>1</TileY>
+		</Player>
+		
+		<Player>
+			<Name>Player 9</Name>
+			<TileX>7</TileX>
+			<TileY>11</TileY>
+		</Player>
+		
+		<Player>
+			<Name>Player 10</Name>
+			<TileX>8</TileX>
+			<TileY>5</TileY>
+		</Player>
+		
+		<Player>
+			<Name>Player 11</Name>
+			<TileX>8</TileX>
+			<TileY>7</TileY>
+		</Player>
+  </Team>
+  
+</Data>

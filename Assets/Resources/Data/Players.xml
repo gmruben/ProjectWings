@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<Data>
+  <Player>
+	<Name>Player 1</Name>
+	<Position>GK</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+
+  <Player>
+	<Name>Player 2</Name>
+	<Position>DF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+  
+  <Player>
+	<Name>Player 3</Name>
+	<Position>DF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+  
+  <Player>
+	<Name>Player 4</Name>
+	<Position>MF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+  
+  <Player>
+	<Name>Player 5</Name>
+	<Position>MF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+  
+  <Player>
+	<Name>Player 6</Name>
+	<Position>DF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+  
+  <Player>
+	<Name>Player 7</Name>
+	<Position>DF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+  
+  <Player>
+	<Name>Player 8</Name>
+	<Position>MF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+  
+  <Player>
+	<Name>Player 9</Name>
+	<Position>MF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+  
+  <Player>
+	<Name>Player 10</Name>
+	<Position>MF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+  
+  <Player>
+	<Name>Player 11</Name>
+	<Position>MF</Position>
+	<Move>10</Move>
+	<Pass>10</Pass>
+  </Player>
+</Data>
