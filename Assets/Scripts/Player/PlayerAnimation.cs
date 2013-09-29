@@ -26,6 +26,11 @@ public class PlayerAnimation : MonoBehaviour
             animationFinished();
         }
     }
+
+    public void addAnimation(exSpriteAnimClip animation)
+    {
+        m_animation.animations.Add(animation);
+    }
 }
 
 public class PlayerAnimationIds
@@ -34,4 +39,8 @@ public class PlayerAnimationIds
     public const string RUN = "run";
     public const string SHOOT = "shoot";
     public const string CATCH = "catch";
+    public const string HURT = "hurt";
+    public const string JUMP = "jump";
+    public const string PASS = "pass";
+    public const string TACKLE = "tackle";
 }

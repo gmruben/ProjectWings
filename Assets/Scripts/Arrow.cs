@@ -109,6 +109,8 @@ public class Arrow : MonoBehaviour
     {
         if (direction != Vector2.zero)
         {
+            counter = COUNTER_TIME;
+
             //Don´t allow diagonals
             if (direction.x != 0 && direction.y != 0)
             {
@@ -121,18 +123,36 @@ public class Arrow : MonoBehaviour
             {
                 if (part.GetComponent<ArrowPart>().index == index)
                 {
+                    rearrange(partList.IndexOf(part));
                     return;
                 }
             }
 
-            //If the index is inside the board and the tile is empty, add it
-            if ((index.x >= 0 && index.x < Board.SIZEX && index.y >= 0 && index.y < Board.SIZEY) && !m_board.isPlayerOnTile(index))
+            if (partList.Count < 6)
             {
-                add(index);
+                //If the index is inside the board and the tile is empty, add it
+                if ((index.x >= 0 && index.x < Board.SIZEX && index.y >= 0 && index.y < Board.SIZEY) && !m_board.isPlayerOnTile(index))
+                {
+                    add(index);
+                }
             }
-
-            counter = COUNTER_TIME;
         }
+    }
+
+    private void rearrange(int index)
+    {
+        int count = partList.Count;
+        for (int i = count - 1; i > index; i--)
+        {
+            GameObject obj = partList[partList.Count - 1];
+
+            tileIndexList.RemoveAt(tileIndexList.Count - 1);
+            partList.RemoveAt(partList.Count - 1);
+            
+            Destroy(obj);
+        }
+
+        m_camera.setTarget(partList[partList.Count - 1].transform);
     }
 
     /// <summary>

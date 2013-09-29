@@ -144,7 +144,7 @@ public class Game : MonoBehaviour
         {
             //Finish current player turn
             m_currentPlayer.m_hasEndedTurn = true;
-            m_currentPlayer.renderer.material = Resources.Load("Textures/Atlas/AtlasTintColor") as Material;
+            m_currentPlayer.renderer.material.SetColor("_TintColor", new Color(0.5f, 0.5f, 0.5f));
 
             m_cursor.gameObject.SetActiveRecursively(true);
             m_cursor.setIndex(m_currentPlayer.Index);

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using System.IO;
 
 public class Player : MonoBehaviour
 {
@@ -14,7 +15,7 @@ public class Player : MonoBehaviour
 
     private PlayerStats m_stats;
     public string m_teamID;         //The ID of the player team
-    public bool m_isGK;             //Whether the player 
+    public bool m_isGK;             //Whether the player
 
     private PlayerAnimation playerAnimation;
     private PlayerController playerController;
@@ -38,6 +39,21 @@ public class Player : MonoBehaviour
 
         playerAnimation = GetComponent<PlayerAnimation>();
         playerAnimation.init();
+
+
+        //LOAD ANIMATIONS IN RUNTIME
+        //Load atlas texture
+        //renderer.material = Resources.Load("Textures/" + pTeamID + "/Team" + pTeamID + "AtlasMaterial") as Material;
+
+        //Add animations
+        /*DirectoryInfo info = new DirectoryInfo(Application.dataPath + "/Resources/Animations/" + pTeamID);
+        FileInfo[] fileInfo = info.GetFiles("*.asset");
+        foreach (FileInfo file in fileInfo)
+        {
+            string animationName = file.Name.Substring(0, file.Name.Length - file.Extension.Length);
+            exSpriteAnimClip animation = Resources.Load("Animations/" + pTeamID + "/" + animationName) as exSpriteAnimClip;
+            playerAnimation.addAnimation(animation);
+        }*/
 
         playerController = GetComponent<PlayerController>();
         playerController.init();

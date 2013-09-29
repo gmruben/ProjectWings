@@ -65,11 +65,10 @@
      <Compile Include="Assets\Scripts\Player\PlayerStats.cs" />
      <None Include="Assets\Resources\Data\Teams.xml" />
      <None Include="Assets\Resources\Data\Boards.xml" />
-     <None Include="Assets\Resources\Shaders\CGTransparentTintColor.shader" />
      <None Include="Assets\ex2d\Core\Shaders\SpriteBlendClipping.shader" />
      <None Include="Assets\Resources\Data\Players.xml" />
      <None Include="Assets\ex2d\Core\Shaders\SpriteBlend.shader" />
-     <None Include="Assets\Resources\Shaders\TransparentTintColor.shader" />
+     <None Include="Assets\Shaders\SpriteBlendAndTint.shader" />
  <Reference Include="ex2D.Runtime">
  <HintPath>Assets\ex2d\Core\ex2D.Runtime.dll</HintPath>
  </Reference>
