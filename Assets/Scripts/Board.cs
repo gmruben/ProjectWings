@@ -128,4 +128,9 @@ public class Board : MonoBehaviour
 
         return null;
     }
+
+    public int[][] data
+    {
+        get { return m_boardData; }
+    }
 }

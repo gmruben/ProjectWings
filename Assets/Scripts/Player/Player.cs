@@ -40,7 +40,6 @@ public class Player : MonoBehaviour
         playerAnimation = GetComponent<PlayerAnimation>();
         playerAnimation.init();
 
-
         //LOAD ANIMATIONS IN RUNTIME
         //Load atlas texture
         //renderer.material = Resources.Load("Textures/" + pTeamID + "/Team" + pTeamID + "AtlasMaterial") as Material;
@@ -79,6 +78,14 @@ public class Player : MonoBehaviour
         //Set camera target
         m_camera.setTarget(transform);
         playerController.move(pTileIndexList);
+
+        PathFinder finder = new PathFinder();
+        Vector2[] list = finder.findPath(pTileIndexList[0], pTileIndexList[pTileIndexList.Count - 1], m_board.data);
+
+        foreach (Vector2 node in list)
+        {
+            Debug.Log(node);
+        }
 
         //Set the player has already moved
         m_hasMoved = true;

@@ -44,6 +44,9 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\AI\BinaryHeap.cs" />
+     <Compile Include="Assets\Scripts\AI\Node.cs" />
+     <Compile Include="Assets\Scripts\AI\PathFinder.cs" />
      <Compile Include="Assets\Scripts\Arrow.cs" />
      <Compile Include="Assets\Scripts\ArrowPart.cs" />
      <Compile Include="Assets\Scripts\Ball\Ball.cs" />
