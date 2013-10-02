@@ -26,6 +26,9 @@ public class Player : MonoBehaviour
     public bool m_hasPerformedAction = false;
     public bool m_hasEndedTurn = false;
 
+    //AI of the player
+    public PlayerAI m_AI;
+
     //EVENTS
     public event Action moveFinishedEvent;
 

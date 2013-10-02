@@ -44,9 +44,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\AI\BinaryHeap.cs" />
-     <Compile Include="Assets\Scripts\AI\Node.cs" />
-     <Compile Include="Assets\Scripts\AI\PathFinder.cs" />
+     <Compile Include="Assets\Scripts\AI\PathFinding\BinaryHeap.cs" />
+     <Compile Include="Assets\Scripts\AI\PathFinding\Node.cs" />
+     <Compile Include="Assets\Scripts\AI\PathFinding\PathFinder.cs" />
+     <Compile Include="Assets\Scripts\AI\PlayerAI.cs" />
+     <Compile Include="Assets\Scripts\AI\Team.cs" />
+     <Compile Include="Assets\Scripts\AI\TeamAI.cs" />
      <Compile Include="Assets\Scripts\Arrow.cs" />
      <Compile Include="Assets\Scripts\ArrowPart.cs" />
      <Compile Include="Assets\Scripts\Ball\Ball.cs" />

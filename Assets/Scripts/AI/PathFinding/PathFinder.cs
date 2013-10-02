@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class PathFinder
 {
+    private bool m_canUseDiagonals = false;
+
     private int mapWidth = 10;
     private int mapHeight = 10;
 
@@ -51,7 +53,8 @@ public class PathFinder
             return null;
         }
 
-        Gcost[(int)start.x][(int)start.y] = 0; //reset starting square's G value to 0
+        //Reset starting square's G value to 0
+        Gcost[(int)start.x][(int)start.y] = 0;
 
         //Add the starting location to the open list of squares to be checked.
         isOnOpenList[(int)start.x][(int)start.y] = true;
@@ -127,70 +130,57 @@ public class PathFinder
                                     }
                                     if (isCorner == false)
                                     {
-                                        //If not already on the open list, add it to the open list.			
-                                        if (!isOnOpenList[a][b])
+                                        bool isDiagonal = (Mathf.Abs(a - parentXval) == 1 && Mathf.Abs(b - parentYval) == 1);
+
+                                        //If it is not diagonal, or it is and we can use diagonals
+                                        if (!isDiagonal || (isDiagonal && m_canUseDiagonals))
                                         {
-                                            //Figure out its G cost
-                                            if (Mathf.Abs(a - parentXval) == 1 && Mathf.Abs(b - parentYval) == 1)
+                                            //If not already on the open list, add it to the open list.			
+                                            if (!isOnOpenList[a][b])
                                             {
-                                                //Cost of going to diagonal squares
-                                                addedGCost = 14;
+                                                //Figure out and set its G Cost
+                                                addedGCost = isDiagonal ? 14 : 10;
+                                                Gcost[a][b] = Gcost[parentXval][parentYval] + addedGCost;
+
+                                                //Change whichList to show that the new item is on the open list.
+                                                isOnOpenList[a][b] = true;
+
+                                                //Figure out its H and F costs and parent
+                                                parent[a][b] = new Vector2(parentXval, parentYval);
+                                                int hcost = 10 * (Mathf.Abs(a - (int)target.x) + Mathf.Abs(b - (int)target.y));
+                                                int fcost = Gcost[a][b] + hcost;
+
+                                                //Add the node to the open list
+                                                m_openList.add(new Node(new Vector2(a, b), fcost, hcost));
                                             }
+                                            //8.If adjacent cell is already on the open list, check to see if this 
+                                            //	path to that cell from the starting location is a better one. 
+                                            //	If so, change the parent of the cell and its G and F costs.	
                                             else
                                             {
-                                                //Cost of going to non-diagonal squares
-                                                addedGCost = 10;
-                                            }
-                                            Gcost[a][b] = Gcost[parentXval][parentYval] + addedGCost;
+                                                //Figure out and set its G Cost
+                                                addedGCost = isDiagonal ? 14 : 10;
+                                                tempGcost = Gcost[parentXval][parentYval] + addedGCost;
 
-                                            //Figure out its H and F costs and parent
-                                            parent[a][b] = new Vector2(parentXval, parentYval);
-
-                                            //Change whichList to show that the new item is on the open list.
-                                            isOnOpenList[a][b] = true;
-
-                                            int hcost = 10 * (Mathf.Abs(a - (int)target.x) + Mathf.Abs(b - (int)target.y));
-                                            int fcost = Gcost[a][b] + hcost;
-
-                                            //Add the node to the open list
-                                            m_openList.add(new Node(new Vector2(a, b), fcost, hcost));
-                                        }
-                                        //8.If adjacent cell is already on the open list, check to see if this 
-                                        //	path to that cell from the starting location is a better one. 
-                                        //	If so, change the parent of the cell and its G and F costs.	
-                                        else
-                                        {
-                                            //Figure out the G cost of this possible new path
-                                            if (Mathf.Abs(a - parentXval) == 1 && Mathf.Abs(b - parentYval) == 1)
-                                            {
-                                                //Cost of going to diagonal tiles
-                                                addedGCost = 14;
-                                            }
-                                            else
-                                            {
-                                                //Cost of going to non-diagonal tiles
-                                                addedGCost = 10;
-                                            }
-                                            tempGcost = Gcost[parentXval][parentYval] + addedGCost;
-
-                                            //If this path is shorter (G cost is lower) then change the parent cell, G cost and F cost. 		
-                                            if (tempGcost < Gcost[a][b]) //if G cost is less,
-                                            {
-                                                parent[a][b] = new Vector2(parentXval, parentYval); //change the square's parent
-                                                Gcost[a][b] = tempGcost;//change the G cost			
-
-                                                //Because changing the G cost also changes the F cost, if
-                                                //the item is on the open list we need to change the item's
-                                                //recorded F cost and its position on the open list to make
-                                                //sure that we maintain a properly ordered open list.
-                                                for (int x = 1; x <= m_openList.count; x++)
+                                                //If this path is shorter (G cost is lower) then change the parent cell, G cost and F cost. 		
+                                                if (tempGcost < Gcost[a][b]) //if G cost is less,
                                                 {
-                                                    //If it is the current node
-                                                    if (m_openList.items[x].index.x == a && m_openList.items[x].index.y == b)
+                                                    parent[a][b] = new Vector2(parentXval, parentYval); //change the square's parent
+                                                    Gcost[a][b] = tempGcost;//change the G cost			
+
+                                                    //Because changing the G cost also changes the F cost, if
+                                                    //the item is on the open list we need to change the item's
+                                                    //recorded F cost and its position on the open list to make
+                                                    //sure that we maintain a properly ordered open list.
+                                                    for (int x = 1; x <= m_openList.count; x++)
                                                     {
-                                                        //Change the F cost
-                                                        m_openList.items[x].FCost = Gcost[a][b] + m_openList.items[x].HCost;
-                                                        m_openList.updateItemAtIndex(x);
+                                                        //If it is the current node
+                                                        if (m_openList.items[x].index.x == a && m_openList.items[x].index.y == b)
+                                                        {
+                                                            //Change the F cost
+                                                            m_openList.items[x].FCost = Gcost[a][b] + m_openList.items[x].HCost;
+                                                            m_openList.updateItemAtIndex(x);
+                                                        }
                                                     }
                                                 }
                                             }
@@ -217,7 +207,7 @@ public class PathFinder
             }
 
         }
-        while (true);//Do until path is found or deemed nonexistent
+        while (true);
 
         //If there is a path, save it
         if (isTherePath)
