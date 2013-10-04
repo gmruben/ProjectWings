@@ -6,6 +6,19 @@ public class PlayerAI : MonoBehaviour
 {
     //Position of the player
     Vector2 m_position;
+    Player m_player;
+
+    //List of goals
+    private List<Goal> m_goalList = new List<Goal>();
+
+    /// <summary>
+    /// Adds a goal to the list
+    /// </summary>
+    /// <param name="pGoal">Goal to be added</param>
+    public void addGoal(Goal pGoal)
+    {
+        m_goalList.Add(pGoal);
+    }
 
     SupportSpot m_pBestSupportingSpot;
 
@@ -118,6 +131,30 @@ public class PlayerAI : MonoBehaviour
         {
             return false;
         }
+    }
+
+    /// <summary>
+    /// Gets the score of the player for tackling an opponent
+    /// </summary>
+    /// <param name="opponent">The opponent to be tackled</param>
+    /// <returns>The score of the player</returns>
+    public float getTacklePlayerScore(Player opponent)
+    {
+        //Initialize score
+        float score = 0;
+
+        //If the opponent is in reach
+        if (distanceTo(m_player.Index, opponent.Index) > 6)
+        {
+            score = -1;
+        }
+
+        return score;
+    }
+
+    public int distanceTo(Vector2 pPlayer1Index, Vector2 pPlayerIndex)
+    {
+        return 1;
     }
 }
 

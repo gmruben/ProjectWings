@@ -20,8 +20,8 @@ public class TeamAI : MonoBehaviour
         TackleInfo info = calculateBestPlayerToTackle(opponentTeam.playerWithTheBall);
 
         PathFinder pathFinder = new PathFinder();
-        List<Vector2> moveList = pathFinder.findPath(info.m_positionToTackleFrom, info.m_positionToTackleTo);
-        info.m_player.move(moveList);
+        //List<Vector2> moveList = pathFinder.findPath(info.m_positionToTackleFrom, info.m_positionToTackleTo);
+        //info.m_player.move(moveList);
     }
 
     /// <summary>

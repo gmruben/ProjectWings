@@ -44,6 +44,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\AI\Goal\Goal.cs" />
+     <Compile Include="Assets\Scripts\AI\Goal\GoalComposite.cs" />
+     <Compile Include="Assets\Scripts\AI\Goal\Goal_MoveTo.cs" />
+     <Compile Include="Assets\Scripts\AI\Goal\Goal_MoveToAndTackle.cs" />
      <Compile Include="Assets\Scripts\AI\PathFinding\BinaryHeap.cs" />
      <Compile Include="Assets\Scripts\AI\PathFinding\Node.cs" />
      <Compile Include="Assets\Scripts\AI\PathFinding\PathFinder.cs" />
