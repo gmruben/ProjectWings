@@ -5,7 +5,8 @@ using System;
 
 public class Arrow : MonoBehaviour
 {
-    public event Action<List<Vector2>> moveFinishedEvent;
+    public event Action e_cancel;
+    public event Action<List<Vector2>> e_end;
 
     private const float COUNTER_TIME = 0.10f;
 
@@ -46,7 +47,12 @@ public class Arrow : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            moveFinishedEvent(tileIndexList);
+            if (e_end != null) e_end(tileIndexList);
+            clear();
+        }
+        else if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (e_cancel != null) e_cancel();
             clear();
         }
     }

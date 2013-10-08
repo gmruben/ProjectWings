@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
         m_playerAnimation = GetComponent<PlayerAnimation>();
 
         //Set idle animation
-        m_playerAnimation.playAnimation(m_player.m_teamID + (m_player.m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.IDLE);
+        m_playerAnimation.playAnimation(m_player.m_teamID + (m_player.m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
     }
 
     void Update()
@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
                 else
                 {
                     m_isMoving = false;
-                    m_playerAnimation.playAnimation(m_player.m_teamID + (m_player.m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.IDLE);
+                    m_playerAnimation.playAnimation(m_player.m_teamID + (m_player.m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
 
                     //Dispatch event
                     moveFinishedEvent();
@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
 
     public void move(List<Vector2> pToMoveSquareList)
     {
-        m_playerAnimation.playAnimation(m_player.m_teamID + (m_player.m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.RUN);
+        m_playerAnimation.playAnimation(m_player.m_teamID + (m_player.m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Run);
 
         m_toMoveSquareList = pToMoveSquareList;
 

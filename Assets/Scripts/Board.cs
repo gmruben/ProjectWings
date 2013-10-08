@@ -45,14 +45,9 @@ public class Board : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-
-    }
-
     public bool isPlayerOnTile(Vector2 index)
     {
-        return m_boardData[(int)index.x][(int)index.y] != 0;
+        return m_boardData[(int)index.x][(int)index.y] == BoardTileData.PLAYER;
     }
 
     public void updateTile(Vector2 pIndex, int pValue)
@@ -64,16 +59,31 @@ public class Board : MonoBehaviour
     {
         m_tileList = new List<GameObject>();
 
-        for (int i = (int)pTileIndex.x - pRadius; i < (int)pTileIndex.x + pRadius; i++)
+        for (int i = (int)pTileIndex.x - pRadius; i < (int)pTileIndex.x + pRadius + 1; i++)
         {
-            for (int j = (int)pTileIndex.y - pRadius; j < (int)pTileIndex.y + pRadius; j++)
+            for (int j = (int)pTileIndex.y - pRadius; j < (int)pTileIndex.y + pRadius + 1; j++)
             {
-                GameObject go = GameObject.Instantiate(m_tilePrefab) as GameObject;
-                go.transform.position = new Vector3(i, 0.05f, j);
+                if (Mathf.Abs(pTileIndex.x - i) +  Mathf.Abs(pTileIndex.y - j) <= pRadius &&
+                   (i != pTileIndex.x || j != pTileIndex.y) &&
+                   (i >= 0 && i < SIZEX && j >= 0 && j < SIZEY))
+                {
+                    GameObject go = GameObject.Instantiate(m_tilePrefab) as GameObject;
+                    go.transform.position = new Vector3(i, 0.05f, j);
 
-                m_tileList.Add(go);
+                    m_tileList.Add(go);
+                }
             }
         }
+    }
+
+    public void clearTileRadius()
+    {
+        for (int i = 0; i < m_tileList.Count; i++)
+        {
+            Destroy(m_tileList[i]);
+        }
+
+        m_tileList.Clear();
     }
 
     public void ballToTile(Vector2 pIndex)

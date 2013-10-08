@@ -6,15 +6,11 @@ public class Box : MonoBehaviour
 {
     private const float COUNTER_TIME = 0.10f;
 
-    public event Action<int> optionSelectedEvent;
-    public event Action closedEvent;
-
-    /*public exSpriteFont m_option1;
-    public exSpriteFont m_option2;
-    public exSpriteFont m_option3;
-    public exSpriteFont m_option4;*/
+    public Action<int> e_selected;
+    public Action e_cancel;
 
     public BoxText[] m_optionList;
+    public int[] m_actionList;
 
     public Transform m_cursor;
 
@@ -28,15 +24,32 @@ public class Box : MonoBehaviour
 
         m_currentOptionIndex = 0;
 
+        m_actionList = new int[4];
+
+        m_actionList[0] = PlayerAction.Move;
         m_optionList[0].text = "Move";
         m_optionList[0].isActive = !pPlayer.m_hasMoved;
 
-        m_optionList[1].text = "Pass";
-        m_optionList[1].isActive = !pPlayer.m_hasPerformedAction && pPlayer.m_ball != null;
-        m_optionList[2].text = "Shoot";
-        m_optionList[2].isActive = !pPlayer.m_hasPerformedAction && pPlayer.m_ball != null;
+        if (pPlayer.hasBall)
+        {
+            m_actionList[1] = PlayerAction.Pass;
+            m_optionList[1].text = "Pass";
+            m_optionList[1].isActive = !pPlayer.m_hasPerformedAction;
+            m_actionList[2] = PlayerAction.Shoot;
+            m_optionList[2].text = "Shoot";
+            m_optionList[2].isActive = !pPlayer.m_hasPerformedAction;
+        }
+        else
+        {
+            m_actionList[1] = PlayerAction.Tackle;
+            m_optionList[1].text = "Tackle";
+            m_optionList[1].isActive = !pPlayer.m_hasPerformedAction;
+            m_optionList[2].text = "";
+            m_optionList[2].isActive = false;
+        }
 
-        m_optionList[3].text = "End";
+        m_actionList[3] = PlayerAction.EndTurn;
+        m_optionList[3].text = "End Turn";
         m_optionList[3].isActive = true;
     }
 
@@ -53,10 +66,11 @@ public class Box : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Z) && m_optionList[m_currentOptionIndex].isActive)
         {
-            if (optionSelectedEvent != null)
-            {
-                optionSelectedEvent(m_currentOptionIndex);
-            }
+            if (e_selected != null) e_selected(m_actionList[m_currentOptionIndex]);
+        }
+        else if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (e_cancel != null) e_cancel();
         }
     }
 
@@ -73,4 +87,13 @@ public class Box : MonoBehaviour
             counter = COUNTER_TIME;
         }
     }
+}
+
+public class PlayerAction
+{
+    public static int Move = 0;
+    public static int Pass = 1;
+    public static int Shoot = 2;
+    public static int Tackle = 3;
+    public static int EndTurn = 4;
 }

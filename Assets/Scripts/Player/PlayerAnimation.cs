@@ -35,12 +35,12 @@ public class PlayerAnimation : MonoBehaviour
 
 public class PlayerAnimationIds
 {
-    public const string IDLE = "idle";
-    public const string RUN = "run";
-    public const string SHOOT = "shoot";
-    public const string CATCH = "catch";
-    public const string HURT = "hurt";
-    public const string JUMP = "jump";
-    public const string PASS = "pass";
-    public const string TACKLE = "tackle";
+    public const string Idle = "idle";
+    public const string Run = "run";
+    public const string Shoot = "shoot";
+    public const string Catch = "catch";
+    public const string Hurt = "hurt";
+    public const string Jump = "jump";
+    public const string Pass = "pass";
+    public const string Tackle = "tackle";
 }

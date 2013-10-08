@@ -99,7 +99,7 @@ public class Ball : MonoBehaviour
         m_inShot = true;
 
         //Set animatino
-        m_ballAnimation.playAnimation(BallAnimationIds.SHOOT);
+        m_ballAnimation.playAnimation("01_" + BallAnimationIds.SHOOT);
     }
 
     #region PROPERTIES

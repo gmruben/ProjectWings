@@ -13,7 +13,8 @@ public class Cursor : MonoBehaviour
     private float counter;
 
     //EVENTS
-    public event Action<Vector2> moveFinishedEvent;
+    public event Action<Vector2> e_end;
+    public event Action e_cancel;
 
     public void init(Game pGame)
     {
@@ -42,7 +43,11 @@ public class Cursor : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Z))
         {
-            moveFinishedEvent(m_index);
+            if (e_end != null) e_end(m_index);
+        }
+        else if (Input.GetKeyDown(KeyCode.X))
+        {
+            if (e_cancel != null) e_cancel();
         }
     }
 

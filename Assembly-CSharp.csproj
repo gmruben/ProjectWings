@@ -66,9 +66,9 @@
      <Compile Include="Assets\Scripts\DataBase\TeamDataBase.cs" />
      <Compile Include="Assets\Scripts\GUI\Box.cs" />
      <Compile Include="Assets\Scripts\GUI\BoxText.cs" />
+     <Compile Include="Assets\Scripts\GUI\GameHUD.cs" />
      <Compile Include="Assets\Scripts\Game.cs" />
      <Compile Include="Assets\Scripts\GameCamera.cs" />
-     <Compile Include="Assets\Scripts\GameHUD.cs" />
      <Compile Include="Assets\Scripts\Player\Player.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerAnimation.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerController.cs" />

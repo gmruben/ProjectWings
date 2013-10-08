@@ -26,6 +26,8 @@ public class Player : MonoBehaviour
     public bool m_hasPerformedAction = false;
     public bool m_hasEndedTurn = false;
 
+    public int m_user;                          //User of the player (P1 or P2/CPU)
+
     //AI of the player
     public PlayerAI m_AI;
 
@@ -82,14 +84,6 @@ public class Player : MonoBehaviour
         m_camera.setTarget(transform);
         playerController.move(pTileIndexList);
 
-        PathFinder finder = new PathFinder();
-        Vector2[] list = finder.findPath(pTileIndexList[0], pTileIndexList[pTileIndexList.Count - 1], m_board.data);
-
-        foreach (Vector2 node in list)
-        {
-            Debug.Log(node);
-        }
-
         //Set the player has already moved
         m_hasMoved = true;
     }
@@ -128,11 +122,37 @@ public class Player : MonoBehaviour
     public void shootTo(Vector2 pIndex)
     {
         //Set player animation
-        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.SHOOT);
+        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Shoot);
         playerAnimation.animationFinished += shootAnimationFinished;
 
         //Store tile to shoot
         m_tileIndexToShoot = pIndex;
+
+        //Set the player has already performed an action
+        m_hasPerformedAction = true;
+    }
+
+    public void tackleTo(Vector2 pIndex)
+    {
+        //Set player animation
+        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Tackle);
+        //playerAnimation.animationFinished += shootAnimationFinished;
+
+        //Store tile to shoot
+        //m_tileIndexToShoot = pIndex;
+
+        //Set the player has already performed an action
+        m_hasPerformedAction = true;
+    }
+
+    public void hasBeenTackled()
+    {
+        //Set player animation
+        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
+        //playerAnimation.animationFinished += shootAnimationFinished;
+
+        //Store tile to shoot
+        //m_tileIndexToShoot = pIndex;
 
         //Set the player has already performed an action
         m_hasPerformedAction = true;
@@ -164,28 +184,19 @@ public class Player : MonoBehaviour
 
     public Vector2 Index
     {
-        set
-        {           
-            playerController.Index = value;
-        }
-
-        get
-        {
-            return playerController.Index;
-        }
+        set { playerController.Index = value; }
+        get { return playerController.Index; }
     }
 
     public bool isFliped
     {
-        set
-        {
-            playerController.isFliped = value;
-        }
+        set { playerController.isFliped = value; }
+        get { return playerController.isFliped; }
+    }
 
-        get
-        {
-            return playerController.isFliped;
-        }
+    public bool hasBall
+    {
+        get { return m_ball != null; }
     }
 
     #endregion
