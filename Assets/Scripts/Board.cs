@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Board : MonoBehaviour
 {
+    public const float c_tileSize = 1;
+
     public const int SIZEX = 19;
     public const int SIZEY = 12;
 
@@ -67,12 +69,39 @@ public class Board : MonoBehaviour
                    (i != pTileIndex.x || j != pTileIndex.y) &&
                    (i >= 0 && i < SIZEX && j >= 0 && j < SIZEY))
                 {
-                    GameObject go = GameObject.Instantiate(m_tilePrefab) as GameObject;
-                    go.transform.position = new Vector3(i, 0.05f, j);
-
-                    m_tileList.Add(go);
+                    drawTile(i, j);
                 }
             }
+        }
+    }
+
+    private void drawTile(float pX, float pY)
+    {
+        GameObject go = GameObject.Instantiate(m_tilePrefab) as GameObject;
+        go.transform.position = new Vector3(pX, 0.05f, pY);
+
+        m_tileList.Add(go);
+    }
+
+    public void drawShoot(Vector2 pIndex)
+    {
+        m_tileList = new List<GameObject>();
+
+        //Tile index of the goal
+        Vector2 goalIndex = new Vector2(18, 6);
+
+        for (int i = (int)pIndex.x + 1; i < SIZEX; i++)
+        {
+            Vector2 start = new Vector2(i, 0);
+            Vector2 end = new Vector2(i, 11);
+
+            Debug.DrawLine(new Vector3(start.x, 0, start.y), new Vector3(end.x, 0, end.y), Color.white, 500);
+            Debug.DrawLine(new Vector3(pIndex.x, 0, pIndex.y), new Vector3(goalIndex.x, 0, goalIndex.y), Color.white, 500);
+
+            Vector2 point = MathHelper.lineIntersectionPoint(start, end, pIndex, goalIndex);
+            Vector2 index = tileIndexAtPoint(point);
+
+            drawTile(index.x, index.y);
         }
     }
 
@@ -139,8 +168,20 @@ public class Board : MonoBehaviour
         return null;
     }
 
+    public Vector2 tileIndexAtPoint(Vector2 pPoint)
+    {
+        int x = (int)((pPoint.x + (c_tileSize / 2)) / c_tileSize);
+        int y = (int)((pPoint.y + (c_tileSize / 2)) / c_tileSize);
+
+        return new Vector2(x, y);
+    }
+
+    #region PROPERTIES
+
     public int[][] data
     {
         get { return m_boardData; }
     }
+
+    #endregion
 }

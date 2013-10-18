@@ -22,6 +22,8 @@ public class Ball : MonoBehaviour
 
     private BallAnimation m_ballAnimation;
 
+    private Team m_currentTeam;
+
     //EVENTS
     public event Action moveFinishedEvent;
 
@@ -59,11 +61,11 @@ public class Ball : MonoBehaviour
         {
             transform.position += new Vector3(m_direction.x * m_shotSpeed, m_speedY, m_direction.y * m_shotSpeed) * Time.deltaTime;
 
-            /*if ((new Vector2(transform.position.x, transform.position.z) - m_targetTileIndex).sqrMagnitude < 0.005f)
+            //Check if we are on the goal tile
+            if (transform.position.x > (Board.SIZEX - 1) * Board.c_tileSize)
             {
-                //Dispatch event
-                moveFinishedEvent();
-            }*/
+                m_currentTeam.opponentTeam.GK.showContextualMenu();
+            }
         }
 	}
 

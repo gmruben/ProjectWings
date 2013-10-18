@@ -33,6 +33,7 @@ public class Player : MonoBehaviour
 
     //EVENTS
     public event Action moveFinishedEvent;
+    public event Action e_actionEnd;
 
     public void init(Board pBoard, string pTeamID, bool pIsGK)
     {
@@ -44,20 +45,6 @@ public class Player : MonoBehaviour
 
         playerAnimation = GetComponent<PlayerAnimation>();
         playerAnimation.init();
-
-        //LOAD ANIMATIONS IN RUNTIME
-        //Load atlas texture
-        //renderer.material = Resources.Load("Textures/" + pTeamID + "/Team" + pTeamID + "AtlasMaterial") as Material;
-
-        //Add animations
-        /*DirectoryInfo info = new DirectoryInfo(Application.dataPath + "/Resources/Animations/" + pTeamID);
-        FileInfo[] fileInfo = info.GetFiles("*.asset");
-        foreach (FileInfo file in fileInfo)
-        {
-            string animationName = file.Name.Substring(0, file.Name.Length - file.Extension.Length);
-            exSpriteAnimClip animation = Resources.Load("Animations/" + pTeamID + "/" + animationName) as exSpriteAnimClip;
-            playerAnimation.addAnimation(animation);
-        }*/
 
         playerController = GetComponent<PlayerController>();
         playerController.init();
@@ -136,26 +123,44 @@ public class Player : MonoBehaviour
     {
         //Set player animation
         playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Tackle);
-        //playerAnimation.animationFinished += shootAnimationFinished;
+        playerAnimation.animationFinished += hasFailedTackle;
 
-        //Store tile to shoot
-        //m_tileIndexToShoot = pIndex;
+        //Move the player to the tile he is tackling to
+        setIndex(pIndex);
 
         //Set the player has already performed an action
         m_hasPerformedAction = true;
     }
 
-    public void hasBeenTackled()
+    private void hasFailedTackle()
+    {
+        playerAnimation.animationFinished -= hasFailedTackle;
+
+        //Set player animation
+        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
+
+        if (e_actionEnd != null) e_actionEnd();
+    }
+
+    public void hasBeenTackledFrom(Vector2 pIndex)
     {
         //Set player animation
         playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
-        //playerAnimation.animationFinished += shootAnimationFinished;
+        playerAnimation.animationFinished += hasDodgedTackle;
 
-        //Store tile to shoot
-        //m_tileIndexToShoot = pIndex;
+        //Move the player to the tile he has been tackled from
+        setIndex(pIndex);
 
         //Set the player has already performed an action
         m_hasPerformedAction = true;
+    }
+
+    private void hasDodgedTackle()
+    {
+        playerAnimation.animationFinished -= hasDodgedTackle;
+
+        //Set player animation
+        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
     }
 
     /// <summary>
@@ -178,6 +183,12 @@ public class Player : MonoBehaviour
 
         //Set camera target
         m_camera.setTarget(m_ball.transform);
+    }
+
+
+    public void showContextualMenu()
+    {
+        //PlayerMenu menu = GUIManager.showGKContMenu();
     }
 
     #region PROPERTIES

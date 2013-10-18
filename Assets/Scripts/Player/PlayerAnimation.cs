@@ -19,7 +19,7 @@ public class PlayerAnimation : MonoBehaviour
         m_animation.Play(pAnimationName);
     }
 
-    private void onAnimationFinished()
+    private void onAnimationFinished(string pAnimationName)
     {
         if (animationFinished != null)
         {

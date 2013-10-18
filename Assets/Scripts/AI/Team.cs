@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Team : MonoBehaviour
 {
+    //Team GK
+    private Player m_gk;
     //List of all the player in the team
     private List<Player> m_playerList;
 
@@ -45,6 +47,11 @@ public class Team : MonoBehaviour
     public Player playerWithTheBall
     {
         get { return m_playerWithTheBall; }
+    }
+
+    public Player GK
+    {
+        get { return m_gk; }
     }
 
     #endregion

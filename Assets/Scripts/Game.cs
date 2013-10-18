@@ -19,7 +19,7 @@ public class Game : MonoBehaviour
     private Arrow m_arrow;
     private Ball m_ball;
 
-    private Box m_box;
+    private PlayerMenu m_box;
 
     private GameCamera m_camera;
 
@@ -74,6 +74,7 @@ public class Game : MonoBehaviour
             if (player.m_tileX == 8 && player.m_tileY == 7)
             {
                 p.setBall(m_ball);
+                m_cursor.setIndex(p.Index);
             }
         }
 
@@ -131,7 +132,7 @@ public class Game : MonoBehaviour
 
     public void openBox()
     {
-        m_box = (GameObject.Instantiate(m_boxPrefab) as GameObject).GetComponent<Box>();
+        m_box = (GameObject.Instantiate(m_boxPrefab) as GameObject).GetComponent<PlayerMenu>();
         m_box.init(m_currentPlayer);
 
         m_box.e_selected += optionSelected;
@@ -162,8 +163,13 @@ public class Game : MonoBehaviour
         }
         else if (optionId == PlayerAction.Shoot)
         {
+            m_cursor.setIndex(m_currentPlayer.Index);
             m_cursor.gameObject.SetActiveRecursively(true);
+
             m_camera.setTarget(m_cursor.transform);
+
+            //Draw board tiles
+            m_board.drawShoot(m_currentPlayer.Index);
 
             //Add listeners
             m_cursor.e_end += shootTo;
@@ -299,6 +305,9 @@ public class Game : MonoBehaviour
         //Add listeners
         m_ball.moveFinishedEvent += passFinished;
 
+        //Remove board tiles
+        m_board.clearTileRadius();
+
         //Shoot the ball
         m_currentPlayer.shootTo(pIndex);
     }
@@ -321,13 +330,24 @@ public class Game : MonoBehaviour
                 m_cursor.gameObject.SetActiveRecursively(false);
 
                 //Add listeners
-                //m_ball.moveFinishedEvent += passFinished;
+                m_currentPlayer.e_actionEnd += tackleEnd;
 
                 //Tackle
+                player.hasBeenTackledFrom(m_currentPlayer.Index);
                 m_currentPlayer.tackleTo(pIndex);
-                player.hasBeenTackled();
             }
         }
+    }
+
+    private void tackleEnd()
+    {
+        //Remove listeners
+        m_currentPlayer.e_actionEnd -= tackleEnd;
+
+        //Clear board
+        m_board.clearTileRadius();
+
+        openBox();
     }
 }
 

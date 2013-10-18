@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System;
 
-public class Box : MonoBehaviour
+public class PlayerMenu : MonoBehaviour
 {
     private const float COUNTER_TIME = 0.10f;
 
@@ -17,6 +17,8 @@ public class Box : MonoBehaviour
     public int m_currentOptionIndex;
 
     private float counter;
+
+    YesNoMenu m_yesNoMenu;
 
     public void init(Player pPlayer)
     {
@@ -67,6 +69,13 @@ public class Box : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z) && m_optionList[m_currentOptionIndex].isActive)
         {
             if (e_selected != null) e_selected(m_actionList[m_currentOptionIndex]);
+
+            /*m_yesNoMenu = GUIManager.instance.showYesNoMenu();
+            
+            //Add listeners
+            m_yesNoMenu.e_yes += confirm;
+            m_yesNoMenu.e_no += cancel;
+            m_yesNoMenu.e_cancel += cancel;*/
         }
         else if (Input.GetKeyDown(KeyCode.X))
         {
@@ -79,14 +88,37 @@ public class Box : MonoBehaviour
         if (direction != 0)
         {
             m_currentOptionIndex += direction;
-            m_currentOptionIndex = Mathf.Max(m_currentOptionIndex, 0);
-            m_currentOptionIndex = Mathf.Min(m_currentOptionIndex, 3);
+            m_currentOptionIndex = Mathf.Clamp(m_currentOptionIndex, 0, 3);
 
             m_cursor.localPosition = new Vector3(m_cursor.localPosition.x, 3 - m_currentOptionIndex * 2, m_cursor.localPosition.z);
 
             counter = COUNTER_TIME;
         }
     }
+
+    /*private void confirm()
+    {
+        //Remove listeners
+        m_yesNoMenu.e_yes -= confirm;
+        m_yesNoMenu.e_no -= cancel;
+        m_yesNoMenu.e_cancel -= cancel;
+
+        Destroy(m_yesNoMenu.gameObject);
+        m_yesNoMenu = null;
+
+        if (e_selected != null) e_selected(m_actionList[m_currentOptionIndex]);
+    }
+
+    private void cancel()
+    {
+        //Remove listeners
+        m_yesNoMenu.e_yes -= confirm;
+        m_yesNoMenu.e_no -= cancel;
+        m_yesNoMenu.e_cancel -= cancel;
+
+        Destroy(m_yesNoMenu.gameObject);
+        m_yesNoMenu = null;
+    }*/
 }
 
 public class PlayerAction
