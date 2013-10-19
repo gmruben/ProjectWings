@@ -14,7 +14,8 @@ public class PlayerMenu : MonoBehaviour
 
     public Transform m_cursor;
 
-    public int m_currentOptionIndex;
+    private int m_currentOptionIndex;
+    private int m_numOptions;
 
     private float counter;
 
@@ -53,6 +54,27 @@ public class PlayerMenu : MonoBehaviour
         m_actionList[3] = PlayerAction.EndTurn;
         m_optionList[3].text = "End Turn";
         m_optionList[3].isActive = true;
+    }
+
+    public void setGKData()
+    {
+        counter = 0;
+
+        m_currentOptionIndex = 0;
+        m_numOptions = 2;
+
+        m_actionList = new int[m_numOptions];
+
+        m_actionList[0] = PlayerAction.Punch;
+        m_optionList[0].text = "Punch";
+        m_optionList[0].isActive = true;
+
+        m_actionList[1] = PlayerAction.Catch;
+        m_optionList[1].text = "Catch";
+        m_optionList[1].isActive = true;
+
+        m_optionList[2].enabled = false;
+        m_optionList[3].enabled = false;
     }
 
     void Update()
@@ -123,9 +145,11 @@ public class PlayerMenu : MonoBehaviour
 
 public class PlayerAction
 {
-    public static int Move = 0;
-    public static int Pass = 1;
-    public static int Shoot = 2;
-    public static int Tackle = 3;
-    public static int EndTurn = 4;
+    public const int Move = 0;
+    public const int Pass = 1;
+    public const int Shoot = 2;
+    public const int Tackle = 3;
+    public const int EndTurn = 4;
+    public const int Punch = 5;
+    public const int Catch = 6;
 }

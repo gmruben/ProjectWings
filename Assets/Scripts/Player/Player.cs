@@ -14,8 +14,7 @@ public class Player : MonoBehaviour
     public Ball m_ball;
 
     private PlayerStats m_stats;
-    public string m_teamID;         //The ID of the player team
-    public bool m_isGK;             //Whether the player
+    private bool m_isGK;
 
     private PlayerAnimation playerAnimation;
     private PlayerController playerController;
@@ -26,7 +25,7 @@ public class Player : MonoBehaviour
     public bool m_hasPerformedAction = false;
     public bool m_hasEndedTurn = false;
 
-    public int m_user;                          //User of the player (P1 or P2/CPU)
+    private Team m_team;
 
     //AI of the player
     public PlayerAI m_AI;
@@ -35,10 +34,10 @@ public class Player : MonoBehaviour
     public event Action moveFinishedEvent;
     public event Action e_actionEnd;
 
-    public void init(Board pBoard, string pTeamID, bool pIsGK)
+    public void init(Board pBoard, Team pTeam, bool pIsGK)
     {
+        m_team = pTeam;
         m_board = pBoard;
-        m_teamID = pTeamID;
         m_isGK = pIsGK;
 
         m_camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameCamera>();
@@ -109,11 +108,13 @@ public class Player : MonoBehaviour
     public void shootTo(Vector2 pIndex)
     {
         //Set player animation
-        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Shoot);
+        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Shoot);
         playerAnimation.animationFinished += shootAnimationFinished;
 
+        //Tile index of the goal
+        Vector2 goalIndex = new Vector2(18, 6);
         //Store tile to shoot
-        m_tileIndexToShoot = pIndex;
+        m_tileIndexToShoot = goalIndex;
 
         //Set the player has already performed an action
         m_hasPerformedAction = true;
@@ -122,7 +123,7 @@ public class Player : MonoBehaviour
     public void tackleTo(Vector2 pIndex)
     {
         //Set player animation
-        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Tackle);
+        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Tackle);
         playerAnimation.animationFinished += hasFailedTackle;
 
         //Move the player to the tile he is tackling to
@@ -137,7 +138,7 @@ public class Player : MonoBehaviour
         playerAnimation.animationFinished -= hasFailedTackle;
 
         //Set player animation
-        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
+        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
 
         if (e_actionEnd != null) e_actionEnd();
     }
@@ -145,7 +146,7 @@ public class Player : MonoBehaviour
     public void hasBeenTackledFrom(Vector2 pIndex)
     {
         //Set player animation
-        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
+        playerAnimation.playAnimation(team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
         playerAnimation.animationFinished += hasDodgedTackle;
 
         //Move the player to the tile he has been tackled from
@@ -160,7 +161,7 @@ public class Player : MonoBehaviour
         playerAnimation.animationFinished -= hasDodgedTackle;
 
         //Set player animation
-        playerAnimation.playAnimation(m_teamID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
+        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
     }
 
     /// <summary>
@@ -179,7 +180,7 @@ public class Player : MonoBehaviour
         //Remove listeners
         playerAnimation.animationFinished -= shootAnimationFinished;
 
-        m_ball.shootTo(m_tileIndexToShoot);
+        m_ball.shootTo(this, m_tileIndexToShoot);
 
         //Set camera target
         m_camera.setTarget(m_ball.transform);
@@ -188,7 +189,22 @@ public class Player : MonoBehaviour
 
     public void showContextualMenu()
     {
-        //PlayerMenu menu = GUIManager.showGKContMenu();
+        PlayerMenu menu = GUIManager.instance.showGKContMenu();
+
+        //Add listeners
+        menu.e_selected += gkSelected;
+    }
+
+    public void gkSelected(int pOptionId)
+    {
+        switch (pOptionId)
+        {
+            case PlayerAction.Punch:
+                SceneManager.instance.play(SceneID.GKPunch);
+                break;
+            case PlayerAction.Catch:
+                break;
+        }
     }
 
     #region PROPERTIES
@@ -208,6 +224,16 @@ public class Player : MonoBehaviour
     public bool hasBall
     {
         get { return m_ball != null; }
+    }
+
+    public bool isGK
+    {
+        get { return m_isGK; }
+    }
+
+    public Team team
+    {
+        get { return m_team; }
     }
 
     #endregion

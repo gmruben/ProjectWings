@@ -29,6 +29,9 @@ public class Game : MonoBehaviour
 
     private int m_gameMode;
 
+    private Team m_team1;
+    private Team m_team2;
+
     //EVENTS
     public Action<int> e_startPhase;
     public Action<int> e_endTurn;
@@ -58,6 +61,17 @@ public class Game : MonoBehaviour
         m_camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameCamera>();
         m_camera.setTarget(m_cursor.transform);
 
+        //Instantiate teams
+        m_team1 = new Team();
+        m_team2 = new Team();
+
+        m_team1.m_opponentTeam = m_team2;
+        m_team2.m_opponentTeam = m_team1;
+        m_team1.m_user = User.P1;
+        m_team2.m_user = User.P2;
+        m_team1.ID = "01";
+        m_team2.ID = "02";
+
         //P1 Team
         TeamData team1Data = TeamDataBase.getTeamData("Nankatsu");
         foreach (PlayerTeamData player in team1Data.m_playerList)
@@ -66,8 +80,7 @@ public class Game : MonoBehaviour
             PlayerData playerData = PlayerDataBase.getPlayerData(player.m_name);
 
             Player p = (GameObject.Instantiate(m_playerPrefab) as GameObject).GetComponent<Player>();
-            p.init(m_board, "01", playerData.m_position == PlayerPosition.GK);
-            p.m_user = User.P1;
+            p.init(m_board, m_team1, playerData.m_position == PlayerPosition.GK);
             
             m_board.addPlayer(p, new Vector2(player.m_tileX, player.m_tileY));
 
@@ -76,6 +89,9 @@ public class Game : MonoBehaviour
                 p.setBall(m_ball);
                 m_cursor.setIndex(p.Index);
             }
+
+            //Add player to the team
+            m_team1.addPlayer(p);
         }
 
         //P2 Team
@@ -86,11 +102,13 @@ public class Game : MonoBehaviour
             PlayerData playerData = PlayerDataBase.getPlayerData(player.m_name);
 
             Player p = (GameObject.Instantiate(m_playerPrefab) as GameObject).GetComponent<Player>();
-            p.init(m_board, "02", playerData.m_position == PlayerPosition.GK);
+            p.init(m_board, m_team2, playerData.m_position == PlayerPosition.GK);
             p.isFliped = true;
-            p.m_user = User.P2;
 
             m_board.addPlayer(p, new Vector2((Board.SIZEX - 1) - player.m_tileX, (Board.SIZEY - 1) - player.m_tileY));
+
+            //Add player to the team
+            m_team2.addPlayer(p);
         }
 
         //P1 starts
@@ -127,7 +145,7 @@ public class Game : MonoBehaviour
 
     private bool isPlayerSelectable()
     {
-        return (m_gameMode == GameModes.P1VsP2 && m_currentPlayer.m_user == m_currentPhase);
+        return (m_gameMode == GameModes.P1VsP2 && m_currentPlayer.team.m_user == m_currentPhase);
     }
 
     public void openBox()
@@ -173,6 +191,7 @@ public class Game : MonoBehaviour
 
             //Add listeners
             m_cursor.e_end += shootTo;
+            m_cursor.e_cancel += cancelShoot;
         }
         else if (optionId == PlayerAction.EndTurn)
         {
@@ -298,6 +317,7 @@ public class Game : MonoBehaviour
     {
         //Remove listeners
         m_cursor.e_end -= shootTo;
+        m_cursor.e_cancel -= cancelShoot;
 
         //Hide the cursor
         m_cursor.gameObject.SetActiveRecursively(false);
@@ -312,6 +332,13 @@ public class Game : MonoBehaviour
         m_currentPlayer.shootTo(pIndex);
     }
 
+    private void cancelShoot()
+    {
+        //Remove listeners
+        m_cursor.e_end -= shootTo;
+        m_cursor.e_cancel -= cancelShoot;
+    }
+
     private void tackleTo(Vector2 pIndex)
     {
          //If there is a player on the tile
@@ -320,7 +347,7 @@ public class Game : MonoBehaviour
             //Get the player on the tile
             Player player = m_board.getPlayerAtIndex(pIndex);
             //If the player is not our team and has the ball
-            if (player.m_user != m_currentPhase && player.hasBall)
+            if (player.team.m_user != m_currentPhase && player.hasBall)
             {
                 //Remove listeners
                 m_cursor.e_end -= tackleTo;

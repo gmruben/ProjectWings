@@ -11,7 +11,7 @@ public class Ball : MonoBehaviour
     private Vector2 m_targetTileIndex;
     private bool m_isMoving = false;
 
-    private float m_shotSpeed = 2.5f;
+    private float m_shotSpeed = 5.0f;
     private bool m_inShot = false;
 
     private float m_accY;
@@ -22,7 +22,7 @@ public class Ball : MonoBehaviour
 
     private BallAnimation m_ballAnimation;
 
-    private Team m_currentTeam;
+    private Player m_player;
 
     //EVENTS
     public event Action moveFinishedEvent;
@@ -64,7 +64,9 @@ public class Ball : MonoBehaviour
             //Check if we are on the goal tile
             if (transform.position.x > (Board.SIZEX - 1) * Board.c_tileSize)
             {
-                m_currentTeam.opponentTeam.GK.showContextualMenu();
+                m_player.team.opponentTeam.GK.showContextualMenu();
+
+                m_inShot = false;
             }
         }
 	}
@@ -90,14 +92,17 @@ public class Ball : MonoBehaviour
     /// <summary>
     /// Shot the ball to a tile
     /// </summary>
+    /// <param name="pPlayer">The player who shot</param>
     /// <param name="pIndex">Tile index</param>
-    public void shootTo(Vector2 pIndex)
+    public void shootTo(Player pPlayer, Vector2 pIndex)
     {
         //Remove parent
         transform.parent = null;
         transform.position = new Vector3(m_index.x, 0.15f, m_index.y);
 
-        m_direction = pIndex - m_index;
+        m_player = pPlayer;
+
+        m_direction = (pIndex - m_index).normalized;
         m_inShot = true;
 
         //Set animatino
