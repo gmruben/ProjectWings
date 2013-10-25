@@ -3,7 +3,7 @@ using System.Collections;
 
 public class SceneHandler : MonoBehaviour
 {
-    public Scene_GKPunch m_scene;
+    public Scene m_scene;
 
 	void Update ()
     {

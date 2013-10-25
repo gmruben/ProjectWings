@@ -86,3 +86,9 @@ public class Team
 
     #endregion
 }
+
+//TEAM COLORS
+//Color1Light = 235, 210, 0
+//Color1Shadow = 120, 120, 15
+//Color2Light = 50, 50, 50
+//Color2Shadow = 255, 255, 255

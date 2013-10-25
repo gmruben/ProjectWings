@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class Scene_GKPunch : Scene
+public class Scene_PlayerVolleyShot : Scene
 {
     public exSoftClip m_background;
 
