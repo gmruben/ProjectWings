@@ -4,26 +4,24 @@ using System;
 
 public class PlayerMenu : MonoBehaviour
 {
-    private const float COUNTER_TIME = 0.10f;
-
     public Action<int> e_selected;
     public Action e_cancel;
 
     public BoxText[] m_optionList;
     public int[] m_actionList;
 
-    public Transform m_cursor;
-
     private int m_currentOptionIndex;
     private int m_numOptions;
 
-    private float counter;
-
     YesNoMenu m_yesNoMenu;
+
+    private bool m_hasFinishedAnimation;
 
     public void init(Player pPlayer)
     {
-        counter = 0;
+        transform.position = new Vector3(-(80 + (32 / 2)), -25, 0);
+
+        m_hasFinishedAnimation = false;
 
         m_currentOptionIndex = 0;
 
@@ -52,14 +50,19 @@ public class PlayerMenu : MonoBehaviour
         }
 
         m_actionList[3] = PlayerAction.EndTurn;
-        m_optionList[3].text = "End Turn";
+        m_optionList[3].text = "End";
         m_optionList[3].isActive = true;
+
+        //Highlight the first active option
+        while(!m_optionList[m_currentOptionIndex].isActive)
+        {
+            m_currentOptionIndex++;
+        }
+        m_optionList[m_currentOptionIndex].isHighlighted = true;
     }
 
     public void setGKData()
     {
-        counter = 0;
-
         m_currentOptionIndex = 0;
         m_numOptions = 2;
 
@@ -79,68 +82,58 @@ public class PlayerMenu : MonoBehaviour
 
     void Update()
     {
-        if (counter > 0)
+        if (!m_hasFinishedAnimation)
         {
-            counter -= Time.deltaTime;
+            transform.position += new Vector3(Time.deltaTime * 150, 0, 0);
+            if (transform.position.x > (32 / 2) - 82)
+            {
+                transform.position = new Vector3((32 / 2) - 82, -25, 0);
+                m_hasFinishedAnimation = true;
+            }
         }
         else
         {
-            move((int)-Input.GetAxisRaw("Vertical"));
-        }
+            if (Input.GetKeyDown(KeyCode.DownArrow))
+            {
+                move(1);
+            }
+            else if (Input.GetKeyDown(KeyCode.UpArrow))
+            {
+                move(-1);
+            }
 
-        if (Input.GetKeyDown(KeyCode.Z) && m_optionList[m_currentOptionIndex].isActive)
-        {
-            if (e_selected != null) e_selected(m_actionList[m_currentOptionIndex]);
-
-            /*m_yesNoMenu = GUIManager.instance.showYesNoMenu();
-            
-            //Add listeners
-            m_yesNoMenu.e_yes += confirm;
-            m_yesNoMenu.e_no += cancel;
-            m_yesNoMenu.e_cancel += cancel;*/
-        }
-        else if (Input.GetKeyDown(KeyCode.X))
-        {
-            if (e_cancel != null) e_cancel();
+            if (Input.GetKeyDown(KeyCode.Z) && m_optionList[m_currentOptionIndex].isActive)
+            {
+                if (e_selected != null) e_selected(m_actionList[m_currentOptionIndex]);
+            }
+            else if (Input.GetKeyDown(KeyCode.X))
+            {
+                if (e_cancel != null) e_cancel();
+            }
         }
     }
 
     private void move(int direction)
     {
-        if (direction != 0)
+        int index = m_currentOptionIndex;
+
+        m_currentOptionIndex += direction;
+        m_currentOptionIndex = Mathf.Clamp(m_currentOptionIndex, 0, 3);
+
+        while (!m_optionList[m_currentOptionIndex].isActive)
         {
             m_currentOptionIndex += direction;
-            m_currentOptionIndex = Mathf.Clamp(m_currentOptionIndex, 0, 3);
 
-            m_cursor.localPosition = new Vector3(m_cursor.localPosition.x, 3 - m_currentOptionIndex * 2, m_cursor.localPosition.z);
-
-            counter = COUNTER_TIME;
+            if (m_currentOptionIndex < 0 || m_currentOptionIndex > 3)
+            {
+                m_currentOptionIndex = index;
+                break;
+            }
         }
+
+        m_optionList[index].isHighlighted = false;
+        m_optionList[m_currentOptionIndex].isHighlighted = true;
     }
-
-    /*private void confirm()
-    {
-        //Remove listeners
-        m_yesNoMenu.e_yes -= confirm;
-        m_yesNoMenu.e_no -= cancel;
-        m_yesNoMenu.e_cancel -= cancel;
-
-        Destroy(m_yesNoMenu.gameObject);
-        m_yesNoMenu = null;
-
-        if (e_selected != null) e_selected(m_actionList[m_currentOptionIndex]);
-    }
-
-    private void cancel()
-    {
-        //Remove listeners
-        m_yesNoMenu.e_yes -= confirm;
-        m_yesNoMenu.e_no -= cancel;
-        m_yesNoMenu.e_cancel -= cancel;
-
-        Destroy(m_yesNoMenu.gameObject);
-        m_yesNoMenu = null;
-    }*/
 }
 
 public class PlayerAction

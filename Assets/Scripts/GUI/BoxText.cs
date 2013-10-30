@@ -3,8 +3,14 @@ using System.Collections;
 
 public class BoxText : MonoBehaviour
 {
+    private Color activeColor = new Color(1.0f, 1.0f, 1.0f);
+    private Color inactiveColor = new Color(0.8f, 0.8f, 0.8f);
+    private Color highlightedColor = new Color(1.0f, 1.0f, 0.0f);
+
     private exSpriteFont m_text;
+    
     private bool m_isActive = true;
+    private bool m_isHighlighted= false;
 
     void Awake()
     {
@@ -12,30 +18,6 @@ public class BoxText : MonoBehaviour
     }
 
     #region PROPERTIES
-
-    public bool isActive
-    {
-        set
-        {
-            if (value)
-            {
-                m_text.topColor = Color.white;
-                m_text.botColor = Color.white;
-            }
-            else
-            {
-                m_text.topColor = Color.grey;
-                m_text.botColor = Color.grey;
-            }
-
-            m_isActive = value;
-        }
-
-        get
-        {
-            return m_isActive;
-        }
-    }
 
     public string text
     {
@@ -47,6 +29,62 @@ public class BoxText : MonoBehaviour
         get
         {
             return m_text.text;
+        }
+    }
+
+    public bool isActive
+    {
+        set
+        {
+            if (value)
+            {
+                m_text.topColor = activeColor;
+                m_text.botColor = activeColor;
+            }
+            else
+            {
+                m_text.topColor = inactiveColor;
+                m_text.botColor = inactiveColor;
+            }
+
+            m_isActive = value;
+        }
+
+        get
+        {
+            return m_isActive;
+        }
+    }
+
+    public bool isHighlighted
+    {
+        set
+        {
+            if (value)
+            {
+                m_text.topColor = highlightedColor;
+                m_text.botColor = highlightedColor;
+            }
+            else
+            {
+                if (m_isHighlighted)
+                {
+                    m_text.topColor = activeColor;
+                    m_text.botColor = activeColor;
+                }
+                else
+                {
+                    m_text.topColor = inactiveColor;
+                    m_text.botColor = inactiveColor;
+                }
+            }
+
+            m_isHighlighted = value;
+        }
+
+        get
+        {
+            return m_isHighlighted;
         }
     }
 

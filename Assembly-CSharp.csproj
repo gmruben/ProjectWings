@@ -61,6 +61,7 @@
      <Compile Include="Assets\Scripts\DataBase\TeamDataBase.cs" />
      <Compile Include="Assets\Scripts\GUI\Arrow.cs" />
      <Compile Include="Assets\Scripts\GUI\ArrowPart.cs" />
+     <Compile Include="Assets\Scripts\GUI\BaseMenu.cs" />
      <Compile Include="Assets\Scripts\GUI\BoxText.cs" />
      <Compile Include="Assets\Scripts\GUI\Cursor.cs" />
      <Compile Include="Assets\Scripts\GUI\GameHUD.cs" />
