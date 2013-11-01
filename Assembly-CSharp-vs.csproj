@@ -84,7 +84,10 @@
      <Compile Include="Assets\Scripts\Scenes\Scene.cs" />
      <Compile Include="Assets\Scripts\Scenes\SceneAnimation.cs" />
      <Compile Include="Assets\Scripts\Scenes\SceneHandler.cs" />
+     <Compile Include="Assets\Scripts\Scenes\SceneManager2.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_BallShot.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_GKCatch.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_PlayerTackle.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerVolleyShot.cs" />
      <Compile Include="Assets\Scripts\Team\Team.cs" />
      <None Include="Assets\Resources\Data\Teams.xml" />

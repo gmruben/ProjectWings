@@ -2,11 +2,10 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class Scene_GKCatch : Scene
+public class Scene_PlayerTackle : Scene
 {
     public exSoftClip m_background;
 
-    public SceneAnimation m_background2;
     public SceneAnimation m_playerAnimation;
     public SceneAnimation m_ballAnimation;
 
@@ -14,15 +13,17 @@ public class Scene_GKCatch : Scene
 
     public override void play()
     {
-        m_background.width = 0;
-        width = 0;
+        //m_background.width = 0;
+        //width = 0;
 
         StartCoroutine(updateBG());
     }
 
     private IEnumerator updateBG()
     {
-        while (width < 128)
+        yield return new WaitForSeconds(0);
+
+        /*while (width < 128)
         {
             width += Time.deltaTime * 500;
             m_background.width = width;
@@ -31,7 +32,10 @@ public class Scene_GKCatch : Scene
         }
 
         width = 128;
-        m_background.width = width;
+        m_background.width = width;*/
+
+        m_playerAnimation.playAnimation("PlayerTackle_Player01Animation");
+        m_playerAnimation.playSpriteAnimation("PlayerTackle_Player02SpriteAnimation");
 
         //m_ballAnimation.playAnimation();
         m_ballAnimation.e_animationEnd += ballAnimationEnd;
@@ -39,7 +43,7 @@ public class Scene_GKCatch : Scene
 
     private void ballAnimationEnd()
     {
-        m_playerAnimation.playSpriteAnimation("GKCatch_GKAnimation");
+        m_playerAnimation.playSpriteAnimation("Player");
 
         m_ballAnimation.e_animationEnd -= ballAnimationEnd;
         m_playerAnimation.e_animationEnd += playerAnimationFinished;
@@ -47,21 +51,15 @@ public class Scene_GKCatch : Scene
 
     private void playerAnimationFinished()
     {
-        m_background2.gameObject.active = true;
-        m_background2.playSpriteAnimation("BG");
-
         m_playerAnimation.e_animationEnd -= playerAnimationFinished;
-        m_background2.e_animationEnd += backgroundAnimationFinished;
     }
 
     private void backgroundAnimationFinished()
     {
-        //m_background2.gameObject.active = false;
-        //m_ballAnimation.gameObject.active = false;
-
-        m_background2.e_animationEnd -= backgroundAnimationFinished;
-
         //The animation has ended
         if (e_end != null) e_end();
+
+        //Clean all actions
+        cleanAllActions();
     }
 }

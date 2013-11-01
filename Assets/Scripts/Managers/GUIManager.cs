@@ -3,6 +3,9 @@ using System.Collections;
 
 public class GUIManager : MonoBehaviour
 {
+    //SCENES
+    public GameObject m_volleyShotScene;
+
     public GameObject m_playerMenuPrefab;
     public GameObject m_yesNoMenuPrefab;
 
@@ -45,6 +48,13 @@ public class GUIManager : MonoBehaviour
         m_yesNoMenu.init();
 
         return m_yesNoMenu;
+    }
+
+    public Scene createVolleyShotScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_volleyShotScene) as GameObject).GetComponent<Scene>();
+
+        return scene;
     }
 
     #endregion

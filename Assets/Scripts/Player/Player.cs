@@ -105,7 +105,7 @@ public class Player : MonoBehaviour
         m_hasPerformedAction = true;
     }
 
-    public void shootTo(Vector2 pIndex)
+    public void shootTo()
     {
         //Set player animation
         playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Shoot);

@@ -138,7 +138,7 @@ public class Game : MonoBehaviour
                 m_cursor.e_end -= selectPlayer;
 
                 m_cursor.gameObject.SetActiveRecursively(false);
-                openBox();
+                showPlayerMenu();
             }
         }
     }
@@ -148,7 +148,7 @@ public class Game : MonoBehaviour
         return (m_gameMode == GameModes.P1VsP2 && m_currentPlayer.team.m_user == m_currentPhase);
     }
 
-    public void openBox()
+    public void showPlayerMenu()
     {
         m_box = (GameObject.Instantiate(m_boxPrefab) as GameObject).GetComponent<PlayerMenu>();
         m_box.init(m_currentPlayer);
@@ -190,7 +190,8 @@ public class Game : MonoBehaviour
             m_board.drawShoot(m_currentPlayer.Index);
 
             //Add listeners
-            m_cursor.e_end += shootTo;
+            //m_cursor.e_end += shootTo;
+            m_cursor.e_end += showShotScene;
             m_cursor.e_cancel += cancelShoot;
         }
         else if (optionId == PlayerAction.EndTurn)
@@ -271,7 +272,7 @@ public class Game : MonoBehaviour
         m_arrow.e_end -= endMove;
         m_arrow.e_cancel -= cancelMove;
 
-        openBox();
+        showPlayerMenu();
     }
 
     private void currentPlayerMoveFinished()
@@ -279,7 +280,7 @@ public class Game : MonoBehaviour
         //Remove listeners
         m_currentPlayer.moveFinishedEvent -= currentPlayerMoveFinished;
 
-        openBox();
+        showPlayerMenu();
     }
 
     /// <summary>
@@ -306,19 +307,26 @@ public class Game : MonoBehaviour
         //Remove listeners
         m_ball.moveFinishedEvent -= passFinished;
 
-        openBox();
+        showPlayerMenu();
+    }
+
+    private void showShotScene(Vector2 pIndex)
+    {
+        //Remove listeners
+        m_cursor.e_end -= showShotScene;
+        m_cursor.e_cancel -= cancelShoot;
+
+        Scene scene = GUIManager.instance.createVolleyShotScene();
+        scene.play();
+        scene.e_end += shootTo;
     }
 
     /// <summary>
     /// Shoot the ball to a tile
     /// </summary>
     /// <param name="pIndex">Tile index</param>
-    private void shootTo(Vector2 pIndex)
+    private void shootTo() //Vector2 pIndex)
     {
-        //Remove listeners
-        m_cursor.e_end -= shootTo;
-        m_cursor.e_cancel -= cancelShoot;
-
         //Hide the cursor
         m_cursor.gameObject.SetActiveRecursively(false);
 
@@ -329,13 +337,13 @@ public class Game : MonoBehaviour
         m_board.clearTileRadius();
 
         //Shoot the ball
-        m_currentPlayer.shootTo(pIndex);
+        m_currentPlayer.shootTo();
     }
 
     private void cancelShoot()
     {
         //Remove listeners
-        m_cursor.e_end -= shootTo;
+        m_cursor.e_end -= showShotScene;
         m_cursor.e_cancel -= cancelShoot;
     }
 
@@ -374,7 +382,7 @@ public class Game : MonoBehaviour
         //Clear board
         m_board.clearTileRadius();
 
-        openBox();
+        showPlayerMenu();
     }
 }
 

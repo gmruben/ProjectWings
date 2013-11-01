@@ -14,6 +14,8 @@ public class Scene_PlayerVolleyShot : Scene
 
     public override void play()
     {
+        m_background2.gameObject.active = false;
+
         m_background.width = 0;
         width = 0;
 
@@ -33,7 +35,7 @@ public class Scene_PlayerVolleyShot : Scene
         width = 128;
         m_background.width = width;
 
-        m_ballAnimation.playAnimation();
+        m_ballAnimation.playAnimation("PlayerVolleyShot_Ball01Animation");
         m_ballAnimation.e_animationEnd += ballAnimationEnd;
     }
 
@@ -56,12 +58,12 @@ public class Scene_PlayerVolleyShot : Scene
 
     private void backgroundAnimationFinished()
     {
-        //m_background2.gameObject.active = false;
-        //m_ballAnimation.gameObject.active = false;
-
         m_background2.e_animationEnd -= backgroundAnimationFinished;
 
         //The animation has ended
         if (e_end != null) e_end();
+
+        //Clean all actions
+        cleanAllActions();
     }
 }

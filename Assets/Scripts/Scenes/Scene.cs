@@ -2,9 +2,16 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public abstract class Scene : MonoBehaviour
+public class Scene : MonoBehaviour
 {
     public Action e_end;
 
-    public abstract void play();
+    public virtual void play() { }
+
+    protected void cleanAllActions()
+    {
+        e_end = null;
+
+        Destroy(gameObject);
+    }
 }
