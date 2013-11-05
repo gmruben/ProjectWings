@@ -3,9 +3,13 @@ using System.Collections;
 
 public class ApplicationFactory : MonoBehaviour
 {
+    //ENTITY PREFABS
+    public GameObject m_emptyExSpritePrefab;
+
     private static ApplicationFactory _instance;
 
-    private MessageBus m_messageBus;
+    public MessageBus m_messageBus;
+    public EntityCreator m_entityCreator;
 
     #region PROPERTIES
 
@@ -39,5 +43,6 @@ public class ApplicationFactory : MonoBehaviour
     private void init()
     {
         m_messageBus = new MessageBus();
+        m_entityCreator = new EntityCreator();
     }
 }

@@ -73,6 +73,7 @@
      <Compile Include="Assets\Scripts\Helpers\MathHelper.cs" />
      <Compile Include="Assets\Scripts\Managers\ActionManager.cs" />
      <Compile Include="Assets\Scripts\Managers\ApplicationFactory.cs" />
+     <Compile Include="Assets\Scripts\Managers\EntityCreator.cs" />
      <Compile Include="Assets\Scripts\Managers\GUIManager.cs" />
      <Compile Include="Assets\Scripts\Managers\MessageBus.cs" />
      <Compile Include="Assets\Scripts\Managers\SceneManager.cs" />
@@ -89,6 +90,8 @@
      <Compile Include="Assets\Scripts\Scenes\Scene_GKCatch.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerTackle.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerVolleyShot.cs" />
+     <Compile Include="Assets\Scripts\SpriteTrail.cs" />
+     <Compile Include="Assets\Scripts\SpriteTrailSprite.cs" />
      <Compile Include="Assets\Scripts\Team\Team.cs" />
      <None Include="Assets\Resources\Data\Teams.xml" />
      <None Include="Assets\Resources\Data\Boards.xml" />
@@ -97,6 +100,7 @@
      <None Include="Assets\Shaders\SpriteTint.shader" />
      <None Include="Assets\ex2d\Core\Shaders\SpriteBlend.shader" />
      <None Include="Assets\Shaders\SpriteBlendAndTint.shader" />
+     <None Include="Assets\Shaders\SpriteTintAndAlpha.shader" />
  <Reference Include="ex2D.Runtime">
  <HintPath>Assets\ex2d\Core\ex2D.Runtime.dll</HintPath>
  </Reference>

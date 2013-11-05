@@ -1,8 +1,9 @@
-Shader "Custom/Color Light And Shadow"
+Shader "Custom/Color Light And Shadow With Alpha"
 {
     Properties
 	{
         _MainTex ("Atlas Texture", 2D) = "white" {}
+		_Alpha ("Alpha", Float) = 1.0
 		_Color1Light ("Color 1 Light", Color) = (1,1,1,1)		//001
 		_Color1Shadow ("Color 1 Shadow", Color) = (1,1,1,1)		//010
 		_Color2Light ("Color 2 Light", Color) = (1,1,1,1)		//011
@@ -46,6 +47,8 @@ Shader "Custom/Color Light And Shadow"
 			float4 _Color2Light;
 			float4 _Color2Shadow;
 
+			float _Alpha;
+
 			struct v2f
 			{
 				float4 pos : SV_POSITION;
@@ -85,6 +88,12 @@ Shader "Custom/Color Light And Shadow"
 					{
 						texColor = _Color2Shadow;
 					}
+
+					texColor.a = _Alpha;
+				}
+				else
+				{
+					texColor.a = 0.0;
 				}
 
 				return texColor;

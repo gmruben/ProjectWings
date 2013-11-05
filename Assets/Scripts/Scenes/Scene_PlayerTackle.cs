@@ -9,12 +9,14 @@ public class Scene_PlayerTackle : Scene
     public SceneAnimation m_playerAnimation;
     public SceneAnimation m_ballAnimation;
 
+    SpriteTrail playerSpriteTrail;
+
     private float width;
 
     public override void play()
     {
-        //m_background.width = 0;
-        //width = 0;
+        playerSpriteTrail = m_playerAnimation.GetComponent<SpriteTrail>();
+        playerSpriteTrail.init(m_playerAnimation.transform);
 
         StartCoroutine(updateBG());
     }
@@ -23,35 +25,23 @@ public class Scene_PlayerTackle : Scene
     {
         yield return new WaitForSeconds(0);
 
-        /*while (width < 128)
-        {
-            width += Time.deltaTime * 500;
-            m_background.width = width;
-            
-            yield return new WaitForSeconds(Time.deltaTime);
-        }
-
-        width = 128;
-        m_background.width = width;*/
-
         m_playerAnimation.playAnimation("PlayerTackle_Player01Animation");
         m_playerAnimation.playSpriteAnimation("PlayerTackle_Player02SpriteAnimation");
-
-        //m_ballAnimation.playAnimation();
-        m_ballAnimation.e_animationEnd += ballAnimationEnd;
-    }
-
-    private void ballAnimationEnd()
-    {
-        m_playerAnimation.playSpriteAnimation("Player");
-
-        m_ballAnimation.e_animationEnd -= ballAnimationEnd;
         m_playerAnimation.e_animationEnd += playerAnimationFinished;
+
+        m_ballAnimation.playSpriteAnimation("PlayerTackle_Ball01SpriteAnimation");
+
+        playerSpriteTrail.setActive(true);
     }
 
     private void playerAnimationFinished()
     {
+        m_ballAnimation.playSpriteAnimation("PlayerTackle_Ball02SpriteAnimation");
+
         m_playerAnimation.e_animationEnd -= playerAnimationFinished;
+
+        //Set trail inactive
+        playerSpriteTrail.setActive(false);
     }
 
     private void backgroundAnimationFinished()
