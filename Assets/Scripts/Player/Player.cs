@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     private GameCamera m_camera;
     public Ball m_ball;
 
-    private PlayerStats m_stats;
+    public PlayerStats m_stats;
     private bool m_isGK;
 
     private PlayerAnimation playerAnimation;
@@ -46,10 +46,15 @@ public class Player : MonoBehaviour
         playerAnimation.init();
 
         playerController = GetComponent<PlayerController>();
-        playerController.init();
+        playerController.init(this, transform, m_board);
+
+        //Stats
+        m_stats = new PlayerStats();
+        m_stats.m_dribble = 10;
+        m_stats.m_tackle = 10;
 
         //Add listeners
-        playerController.moveFinishedEvent += playerControllerMoveFinished;
+        ApplicationFactory.instance.m_messageBus.PlayerMoveEnded += playerControllerMoveFinished;
     }
 
     public void setIndex(Vector2 pIndex)
@@ -172,7 +177,7 @@ public class Player : MonoBehaviour
     {
         m_board.playerToTile(this);
 
-        moveFinishedEvent();
+        if (moveFinishedEvent != null) moveFinishedEvent();
     }
 
     private void shootAnimationFinished()
@@ -205,6 +210,11 @@ public class Player : MonoBehaviour
             case PlayerAction.Catch:
                 break;
         }
+    }
+
+    public bool isGonnaTackle()
+    {
+        return true; // UnityEngine.Random.Range(0.0f, 1.0f) > 0.5f;
     }
 
     #region PROPERTIES

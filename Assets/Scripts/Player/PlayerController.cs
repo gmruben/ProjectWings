@@ -6,32 +6,26 @@ using System;
 public class PlayerController : MonoBehaviour
 {
     private Transform m_transform;
+    private Board m_board;
 
     private float m_speed = 2.5f;
 
     private List<Vector2> m_toMoveSquareList;
 
-    private bool m_isMoving = false;
-    private bool m_isInAMove = false;
-
     private bool m_isFliped = false;
-
-    private Vector2 m_nextSquare;
-    private Vector2 m_direction;
-    private Vector2 m_index;
 
     private Player m_player;
     private exSprite m_sprite;
     private PlayerAnimation m_playerAnimation;
 
-    //EVENTS
-    public event Action moveFinishedEvent;
+    private Vector2 m_index;
 
-    public void init()
+    public void init(Player pPlayer, Transform pTransform, Board pBoard)
     {
-        m_transform = transform;
+        m_transform = pTransform;
+        m_board = pBoard;
 
-        m_player = GetComponent<Player>();
+        m_player = pPlayer;
         m_sprite = GetComponent<exSprite>();
         m_playerAnimation = GetComponent<PlayerAnimation>();
 
@@ -39,57 +33,84 @@ public class PlayerController : MonoBehaviour
         m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
     }
 
-    void Update()
+    public void move(List<Vector2> pToMoveSquareList)
     {
-        if (m_isMoving)
+        m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Run);
+        m_toMoveSquareList = pToMoveSquareList;
+
+        StartCoroutine(moveToNextSquare());
+    }
+
+    private IEnumerator moveToNextSquare()
+    {
+        Vector2 nextSquareIndex = m_toMoveSquareList[0];
+        Vector2 direction = nextSquareIndex - m_player.Index;
+
+        m_isFliped = direction.x != 0 && direction.x < 0;
+
+        while ((new Vector2(transform.position.x, transform.position.z) - nextSquareIndex).sqrMagnitude > 0.005f)
         {
-            transform.position += new Vector3(m_direction.x, 0, m_direction.y) * m_speed * Time.deltaTime;
+            transform.position += new Vector3(direction.x, 0, direction.y) * m_speed * Time.deltaTime;
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
 
-            if ((new Vector2(transform.position.x, transform.position.z) - m_nextSquare).sqrMagnitude < 0.005f)
+        Index = nextSquareIndex;
+        m_toMoveSquareList.RemoveAt(0);
+
+        //Check if any player around is gonna tackle
+        if (!checkPlayersAround())
+        {
+            if (m_toMoveSquareList.Count > 0)
             {
-                Index = m_nextSquare;
-
-                if (m_toMoveSquareList.Count > 0)
-                {
-                    moveToNextSquare();
-                }
-                else
-                {
-                    m_isMoving = false;
-                    m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
-
-                    //Dispatch event
-                    moveFinishedEvent();
-                }
+                StartCoroutine(moveToNextSquare());
+            }
+            else
+            {
+                m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
+                ApplicationFactory.instance.m_messageBus.dispatchPlayerMoveEnded();
             }
         }
     }
 
-    public void move(List<Vector2> pToMoveSquareList)
+    private bool checkPlayersAround()
     {
-        m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Run);
+        for (int x = (int)Index.x - 1; x < (int)Index.x + 2; x++)
+        {
+            for (int y = (int)Index.y - 1; y < (int)Index.y + 2; y++)
+            {
+                if (Mathf.Abs(Index.x - x) +  Mathf.Abs(Index.y - y) <= 1 && (x != Index.x || y != Index.y) && (x >= 0 && x < Board.SIZEX && y >= 0 && y < Board.SIZEY))
+                {
+                    if (m_board.isPlayerOnTile(new Vector2(x, y)))
+                    {
+                        Player player = m_board.getPlayerAtIndex(new Vector2(x, y));
+                        if (player.isGonnaTackle())
+                        {
+                            Scene scene = GUIManager.instance.createTackleScene();
+                        
+                            scene.play();
+                            scene.e_end += dribbleEnded;
 
-        m_toMoveSquareList = pToMoveSquareList;
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
 
-        m_isMoving = true;
-        m_isInAMove = false;
-
-        moveToNextSquare();
+        return false;
     }
 
-    private void moveToNextSquare()
+    private void dribbleEnded()
     {
-        Vector2 squareIndex = m_toMoveSquareList[0];
-
-        m_nextSquare = squareIndex;
-        m_direction = squareIndex - m_player.Index;
-
-        if (m_direction.x != 0)
+        if (m_toMoveSquareList.Count > 0)
         {
-            isFliped = m_direction.x < 0;
+            StartCoroutine(moveToNextSquare());
         }
-        
-        m_toMoveSquareList.RemoveAt(0);
+        else
+        {
+            m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
+            ApplicationFactory.instance.m_messageBus.dispatchPlayerMoveEnded();
+        }
     }
 
     #region PROPERTIES

@@ -15,8 +15,8 @@ public class Scene_PlayerTackle : Scene
 
     public override void play()
     {
-        playerSpriteTrail = m_playerAnimation.GetComponent<SpriteTrail>();
-        playerSpriteTrail.init(m_playerAnimation.transform);
+        //playerSpriteTrail = m_playerAnimation.GetComponent<SpriteTrail>();
+        //playerSpriteTrail.init(m_playerAnimation.transform);
 
         StartCoroutine(updateBG());
     }
@@ -31,21 +31,24 @@ public class Scene_PlayerTackle : Scene
 
         m_ballAnimation.playSpriteAnimation("PlayerTackle_Ball01SpriteAnimation");
 
-        playerSpriteTrail.setActive(true);
+        //playerSpriteTrail.setActive(true);
     }
 
     private void playerAnimationFinished()
     {
-        m_ballAnimation.playSpriteAnimation("PlayerTackle_Ball02SpriteAnimation");
-
         m_playerAnimation.e_animationEnd -= playerAnimationFinished;
 
+        m_ballAnimation.playSpriteAnimation("PlayerTackle_Ball02SpriteAnimation");
+        m_ballAnimation.e_animationEnd += ballAnimationFinished;
+
         //Set trail inactive
-        playerSpriteTrail.setActive(false);
+        //playerSpriteTrail.setActive(false);
     }
 
-    private void backgroundAnimationFinished()
+    private void ballAnimationFinished()
     {
+        m_ballAnimation.e_animationEnd -= ballAnimationFinished;
+
         //The animation has ended
         if (e_end != null) e_end();
 

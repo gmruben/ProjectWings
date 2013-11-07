@@ -3,7 +3,7 @@ using System.Collections;
 
 public abstract class Goal
 {
-    protected int m_player;
+    //protected int m_player;
     protected int m_status;
 
     /// <summary>

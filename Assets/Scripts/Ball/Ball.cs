@@ -57,7 +57,7 @@ public class Ball : MonoBehaviour
             }
         }
 
-        if (m_inShot)
+        /*if (m_inShot)
         {
             transform.position += new Vector3(m_direction.x * m_shotSpeed, m_speedY, m_direction.y * m_shotSpeed) * Time.deltaTime;
 
@@ -68,7 +68,7 @@ public class Ball : MonoBehaviour
 
                 m_inShot = false;
             }
-        }
+        }*/
 	}
 
     /// <summary>
@@ -89,6 +89,8 @@ public class Ball : MonoBehaviour
         m_speedY = 1.5f * m_gravity;
     }
 
+    
+
     /// <summary>
     /// Shot the ball to a tile
     /// </summary>
@@ -103,11 +105,16 @@ public class Ball : MonoBehaviour
         m_player = pPlayer;
 
         m_direction = (pIndex - m_index).normalized;
-        m_inShot = true;
+        //m_inShot = true;
 
         //Set animatino
         m_ballAnimation.playAnimation("01_" + BallAnimationIds.SHOOT);
     }
+
+    /*private IEnumerator updateShot()
+    {
+        
+    }*/
 
     #region PROPERTIES
 

@@ -81,6 +81,7 @@
      <Compile Include="Assets\Scripts\Player\PlayerAnimation.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerStats.cs" />
+     <Compile Include="Assets\Scripts\Player\SpriteBillboard.cs" />
      <Compile Include="Assets\Scripts\Scenes\AnimatedBG.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene.cs" />
      <Compile Include="Assets\Scripts\Scenes\SceneAnimation.cs" />
@@ -88,6 +89,8 @@
      <Compile Include="Assets\Scripts\Scenes\SceneManager2.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_BallShot.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_GKCatch.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_Goal.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_PlayerHurt.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerTackle.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerVolleyShot.cs" />
      <Compile Include="Assets\Scripts\SpriteTrail.cs" />

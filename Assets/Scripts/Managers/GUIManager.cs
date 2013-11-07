@@ -5,6 +5,7 @@ public class GUIManager : MonoBehaviour
 {
     //SCENES
     public GameObject m_volleyShotScene;
+    public GameObject m_tackleScene;
 
     public GameObject m_playerMenuPrefab;
     public GameObject m_yesNoMenuPrefab;
@@ -53,6 +54,12 @@ public class GUIManager : MonoBehaviour
     public Scene createVolleyShotScene()
     {
         Scene scene = (GameObject.Instantiate(m_volleyShotScene) as GameObject).GetComponent<Scene>();
+        return scene;
+    }
+
+    public Scene createTackleScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_tackleScene) as GameObject).GetComponent<Scene>();
 
         return scene;
     }
