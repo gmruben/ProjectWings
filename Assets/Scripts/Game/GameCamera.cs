@@ -9,7 +9,7 @@ public class GameCamera : MonoBehaviour
     {
         if (m_target)
         {
-            transform.position = new Vector3(m_target.position.x, transform.position.y, m_target.position.z - 12.5f);
+            transform.position = new Vector3(m_target.position.x, transform.position.y, -9.5f); //m_target.position.z - 12.5f);
         }
     }
 

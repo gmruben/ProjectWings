@@ -90,6 +90,7 @@
      <Compile Include="Assets\Scripts\Scenes\Scene_BallShot.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_GKCatch.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_Goal.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_PlayerDash.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerHurt.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerTackle.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerVolleyShot.cs" />
