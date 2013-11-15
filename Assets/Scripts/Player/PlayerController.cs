@@ -15,7 +15,10 @@ public class PlayerController : MonoBehaviour
     private bool m_isFliped = false;
 
     private Player m_player;
+    
     private exSprite m_sprite;
+    public exSprite m_spriteShadow;
+
     private PlayerAnimation m_playerAnimation;
 
     private Vector2 m_index;
@@ -26,7 +29,9 @@ public class PlayerController : MonoBehaviour
         m_board = pBoard;
 
         m_player = pPlayer;
+
         m_sprite = GetComponent<exSprite>();
+        
         m_playerAnimation = GetComponent<PlayerAnimation>();
 
         //Set idle animation
@@ -85,10 +90,11 @@ public class PlayerController : MonoBehaviour
                         Player player = m_board.getPlayerAtIndex(new Vector2(x, y));
                         if (player.isGonnaTackle())
                         {
-                            Scene scene = GUIManager.instance.createTackleScene();
+                            ApplicationFactory.instance.m_messageBus.dispatchTackleBattleStart();
+                            /*Scene scene = GUIManager.instance.createTackleScene();
                         
                             scene.play();
-                            scene.e_end += dribbleEnded;
+                            scene.e_end += dribbleEnded;*/
 
                             return true;
                         }
@@ -145,7 +151,10 @@ public class PlayerController : MonoBehaviour
 
             //Set the sprite scale
             float scaleX = Mathf.Abs(m_sprite.scale.x) * (m_isFliped ? -1 : 1);
-            m_sprite.scale = new Vector2(scaleX, m_sprite.scale.y);
+            float scaleY = m_sprite.scale.y;
+
+            m_sprite.scale = new Vector2(scaleX, scaleY);
+            m_spriteShadow.scale = new Vector2(scaleX, scaleY);
         }
 
         get

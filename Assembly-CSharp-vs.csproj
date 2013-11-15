@@ -81,7 +81,6 @@
      <Compile Include="Assets\Scripts\Player\PlayerAnimation.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerController.cs" />
      <Compile Include="Assets\Scripts\Player\PlayerStats.cs" />
-     <Compile Include="Assets\Scripts\Player\SpriteBillboard.cs" />
      <Compile Include="Assets\Scripts\Scenes\AnimatedBG.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene.cs" />
      <Compile Include="Assets\Scripts\Scenes\SceneAnimation.cs" />
@@ -92,11 +91,13 @@
      <Compile Include="Assets\Scripts\Scenes\Scene_Goal.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerDash.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerHurt.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_PlayerJump.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerTackle.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerVolleyShot.cs" />
      <Compile Include="Assets\Scripts\SpriteTrail.cs" />
      <Compile Include="Assets\Scripts\SpriteTrailSprite.cs" />
      <Compile Include="Assets\Scripts\Team\Team.cs" />
+     <None Include="Assets\Shaders\Alpha.shader" />
      <None Include="Assets\Resources\Data\Teams.xml" />
      <None Include="Assets\Resources\Data\Boards.xml" />
      <None Include="Assets\ex2d\Core\Shaders\SpriteBlendClipping.shader" />

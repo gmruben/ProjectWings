@@ -2,11 +2,13 @@ using System;
 
 public class MessageBus
 {
-    public Action QuitGame;
-    public Action StartBackswing;
-    public Action ReadyForShot;
-
+    public Action TackleBattleStart;
     public Action PlayerMoveEnded;
+
+    public void dispatchTackleBattleStart()
+    {
+        if (TackleBattleStart != null) TackleBattleStart();
+    }
 
     public void dispatchPlayerMoveEnded()
     {
@@ -15,8 +17,7 @@ public class MessageBus
 
     public void cleanAllActions()
     {
-        QuitGame = null;
-        StartBackswing = null;
-        ReadyForShot = null;
+        TackleBattleStart = null;
+        PlayerMoveEnded = null;
     }
 }

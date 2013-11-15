@@ -12,6 +12,9 @@ public class PlayerAnimation : MonoBehaviour
     public void init()
     {
         m_animation = GetComponent<exSpriteAnimation>();
+
+        //Add listeners
+        ApplicationFactory.instance.m_messageBus.TackleBattleStart += tackleBattleStart;
 	}
 
     public void playAnimation(string pAnimationName)
@@ -30,6 +33,11 @@ public class PlayerAnimation : MonoBehaviour
     public void addAnimation(exSpriteAnimClip animation)
     {
         m_animation.animations.Add(animation);
+    }
+
+    private void tackleBattleStart()
+    {
+        m_animation.Pause();
     }
 }
 
