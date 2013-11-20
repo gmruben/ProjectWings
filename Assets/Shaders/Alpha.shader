@@ -17,6 +17,7 @@ Shader "Custom/Alpha"
 
         Cull Off 
         Lighting Off 
+		//ZWrite Off
         Blend SrcAlpha OneMinusSrcAlpha
 
         BindChannels

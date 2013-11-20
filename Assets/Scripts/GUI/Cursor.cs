@@ -16,10 +16,8 @@ public class Cursor : MonoBehaviour
     public event Action<Vector2> e_end;
     public event Action e_cancel;
 
-    public void init(Game pGame)
+    public void init()
     {
-        m_game = pGame;
-
         m_index = Vector2.zero;
         counter = 0;
     }

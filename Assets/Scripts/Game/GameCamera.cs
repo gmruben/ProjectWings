@@ -46,9 +46,7 @@ public class GameCamera : MonoBehaviour
             yield return new WaitForSeconds(Time.deltaTime);
         }
 
-        Scene scene = GUIManager.instance.createTackleScene();
-
-        scene.play();
-        //scene.e_end += dribbleEnded;
+        SceneManager.instance.playTackle02(); // GUIManager.instance.createTackle02Scene();
+        //SceneManager.instance.e_sceneFinished += dribbleEnded;
     }
 }

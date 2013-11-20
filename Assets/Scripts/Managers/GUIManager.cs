@@ -6,6 +6,8 @@ public class GUIManager : MonoBehaviour
     //SCENES
     public GameObject m_volleyShotScene;
     public GameObject m_tackleScene;
+    public GameObject m_tackle02Scene;
+    public GameObject m_jumpScene;
 
     public GameObject m_playerMenuPrefab;
     public GameObject m_yesNoMenuPrefab;
@@ -17,20 +19,13 @@ public class GUIManager : MonoBehaviour
 
     #region PUBLIC FUNCTIONS
 
-    public PlayerMenu showAtkMenu()
+    public PlayerMenu createPlayerMenu()
     {
         PlayerMenu menu = (GameObject.Instantiate(m_playerMenuPrefab) as GameObject).GetComponent<PlayerMenu>();
-        //menu.init(m_currentPlayer);
-
         return menu;
     }
 
     public void showDefMenu()
-    {
-
-    }
-
-    public void showPlayerContMenu()
     {
 
     }
@@ -61,6 +56,18 @@ public class GUIManager : MonoBehaviour
     {
         Scene scene = (GameObject.Instantiate(m_tackleScene) as GameObject).GetComponent<Scene>();
 
+        return scene;
+    }
+
+    public Scene createTackle02Scene()
+    {
+        Scene scene = (GameObject.Instantiate(m_tackle02Scene) as GameObject).GetComponent<Scene>();
+        return scene;
+    }
+
+    public Scene createJumpScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_jumpScene) as GameObject).GetComponent<Scene>();
         return scene;
     }
 

@@ -91,10 +91,7 @@ public class PlayerController : MonoBehaviour
                         if (player.isGonnaTackle())
                         {
                             ApplicationFactory.instance.m_messageBus.dispatchTackleBattleStart();
-                            /*Scene scene = GUIManager.instance.createTackleScene();
-                        
-                            scene.play();
-                            scene.e_end += dribbleEnded;*/
+                            ApplicationFactory.instance.m_fxManager.createFX02(player.transform.position);
 
                             return true;
                         }

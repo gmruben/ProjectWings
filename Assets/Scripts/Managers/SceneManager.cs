@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SceneManager : MonoBehaviour
 {
@@ -9,6 +10,9 @@ public class SceneManager : MonoBehaviour
     //SCENES
     public Scene m_sceneGKPunch;
     public Scene m_sceneVolleyShot;
+
+    private Scene m_scene;
+    private List<Scene> m_sceneList;
 
     private static SceneManager _instance;
 
@@ -21,7 +25,46 @@ public class SceneManager : MonoBehaviour
         scene.e_end += sceneFinished;
     }
 
+    public void playTackle02()
+    {
+        m_sceneList = new List<Scene>();
+
+        Scene tackleScene = GUIManager.instance.createTackle02Scene();
+        tackleScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(tackleScene);
+
+        Scene jumpScene = GUIManager.instance.createJumpScene();
+        jumpScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(jumpScene);
+
+        playScene();
+    }
+
     #endregion
+
+    private void playScene()
+    {
+        m_scene = m_sceneList[0];
+        m_sceneList.RemoveAt(0);
+
+        m_scene.gameObject.SetActiveRecursively(true);
+        m_scene.play();
+        m_scene.e_end += sceneEnd;
+    }
+
+    private void sceneEnd()
+    {
+        m_scene.e_end -= sceneEnd;
+
+        if (m_sceneList.Count > 0)
+        {
+            playScene();
+        }
+        else
+        {
+            if (e_sceneFinished != null) e_sceneFinished();
+        }
+    }
 
     private void sceneFinished()
     {

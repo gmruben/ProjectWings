@@ -53,7 +53,7 @@ public class Game : MonoBehaviour
 
         m_board.init(m_ball);
         m_ball.init(m_board);
-        m_cursor.init(this);
+        m_cursor.init();
 
         m_arrow = (GameObject.Instantiate(m_arrowPrefab) as GameObject).GetComponent<Arrow>();
         m_arrow.gameObject.SetActiveRecursively(false);
