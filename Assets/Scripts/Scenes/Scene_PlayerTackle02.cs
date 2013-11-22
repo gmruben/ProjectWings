@@ -6,7 +6,7 @@ public class Scene_PlayerTackle02 : Scene
 {
     public exSoftClip m_background;
 
-    public SceneAnimation m_playerAnimation;
+    public AnimationHandler m_playerAnimation;
 
     private float width;
 

@@ -9,6 +9,12 @@ public class EntityCreator
         return cursor;
     }
 
+    public Arrow createArrow()
+    {
+        Arrow arrow = (GameObject.Instantiate(ApplicationFactory.instance.m_arrow) as GameObject).GetComponent<Arrow>();
+        return arrow;
+    }
+
     public SpriteTrailSprite createSpriteTrailSprite(exSprite pExSprite)
     {
         SpriteTrailSprite sprite = (GameObject.Instantiate(ApplicationFactory.instance.m_emptyExSpritePrefab) as GameObject).GetComponent<SpriteTrailSprite>();

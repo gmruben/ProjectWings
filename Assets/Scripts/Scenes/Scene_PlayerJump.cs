@@ -4,11 +4,14 @@ using System.Collections;
 
 public class Scene_PlayerJump : Scene
 {
+    private const float m_speed = 350;
+    private const float m_sceenHeight = 64;
+
     public exSoftClip m_background;
 
-    public SceneAnimation m_background2;
-    public SceneAnimation m_playerAnimation;
-    public SceneAnimation m_ballAnimation;
+    public AnimationHandler m_background2;
+    public AnimationHandler m_playerAnimation;
+    public AnimationHandler m_ballAnimation;
 
     SpriteTrail playerSpriteTrail;
 
@@ -30,15 +33,16 @@ public class Scene_PlayerJump : Scene
 
     private IEnumerator updateBG()
     {
-        while (height < 128)
+        while (height < m_sceenHeight)
         {
-            height += Time.deltaTime * 350;
+            height += Time.deltaTime * m_speed;
             m_background.height = height;
 
             yield return new WaitForSeconds(Time.deltaTime);
         }
 
-        height = 128;
+        height = m_sceenHeight;
+        m_background.height = height;
     }
 
     private void playerAnimationFinished()

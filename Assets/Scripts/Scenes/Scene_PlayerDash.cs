@@ -6,8 +6,8 @@ public class Scene_PlayerDash : Scene
 {
     public exSoftClip m_background;
 
-    public SceneAnimation m_playerAnimation;
-    public SceneAnimation m_ballAnimation;
+    public AnimationHandler m_playerAnimation;
+    public AnimationHandler m_ballAnimation;
 
     SpriteTrail playerSpriteTrail;
 

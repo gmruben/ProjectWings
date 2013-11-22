@@ -6,9 +6,9 @@ public class Scene_PlayerVolleyShot : Scene
 {
     public exSoftClip m_background;
 
-    public SceneAnimation m_background2;
-    public SceneAnimation m_playerAnimation;
-    public SceneAnimation m_ballAnimation;
+    public AnimationHandler m_background2;
+    public AnimationHandler m_playerAnimation;
+    public AnimationHandler m_ballAnimation;
 
     private float width;
 

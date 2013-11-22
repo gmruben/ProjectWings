@@ -38,6 +38,7 @@ public class Board : MonoBehaviour
             {
                 GameObject go = GameObject.Instantiate(m_tile) as GameObject;
                 go.transform.position = new Vector3(i, 0, j);
+                go.transform.parent = transform;
 
                 int index = atlas.GetIndexByName(boardData.m_boardTileData[i][j]);
                 go.GetComponent<exSprite>().SetSprite(atlas, index);

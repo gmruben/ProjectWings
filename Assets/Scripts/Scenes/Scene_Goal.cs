@@ -4,7 +4,7 @@ using System.Collections;
 
 public class Scene_Goal : Scene
 {
-    public SceneAnimation m_ballAnimation;
+    public AnimationHandler m_ballAnimation;
 
     SpriteTrail playerSpriteTrail;
 

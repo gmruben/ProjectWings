@@ -4,6 +4,7 @@ using System.Collections;
 public class GUIManager : MonoBehaviour
 {
     //SCENES
+    public GameObject m_startScene;
     public GameObject m_volleyShotScene;
     public GameObject m_tackleScene;
     public GameObject m_tackle02Scene;
@@ -12,12 +13,20 @@ public class GUIManager : MonoBehaviour
     public GameObject m_playerMenuPrefab;
     public GameObject m_yesNoMenuPrefab;
 
+    public GameObject m_playerTurnAnimationPrefab;
+
     private static GUIManager _instance;
 
     private PlayerMenu m_playerMenu;
     private YesNoMenu m_yesNoMenu;
 
     #region PUBLIC FUNCTIONS
+
+    public PlayerTurnAnimation createPlayerTurnAnimation()
+    {
+        PlayerTurnAnimation playerTurnAnimation = (GameObject.Instantiate(m_playerTurnAnimationPrefab) as GameObject).GetComponent<PlayerTurnAnimation>();
+        return playerTurnAnimation;
+    }
 
     public PlayerMenu createPlayerMenu()
     {
@@ -44,6 +53,12 @@ public class GUIManager : MonoBehaviour
         m_yesNoMenu.init();
 
         return m_yesNoMenu;
+    }
+
+    public Scene createStartScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_startScene) as GameObject).GetComponent<Scene>();
+        return scene;
     }
 
     public Scene createVolleyShotScene()

@@ -30,6 +30,8 @@ public class Player : MonoBehaviour
     //AI of the player
     public PlayerAI m_AI;
 
+    private Vector2 m_tackleToIndex;
+
     //EVENTS
     public event Action moveFinishedEvent;
     public event Action e_actionEnd;
@@ -127,12 +129,37 @@ public class Player : MonoBehaviour
 
     public void tackleTo(Vector2 pIndex)
     {
+        m_tackleToIndex = pIndex;
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performTackle;
+    }
+
+    public void jumpTo(Vector2 pIndex)
+    {
+        m_tackleToIndex = pIndex;
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performJump;
+    }
+
+    public void performTackle()
+    {
         //Set player animation
         playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Tackle);
         playerAnimation.animationFinished += hasFailedTackle;
 
         //Move the player to the tile he is tackling to
-        setIndex(pIndex);
+        setIndex(m_tackleToIndex);
+
+        //Set the player has already performed an action
+        m_hasPerformedAction = true;
+    }
+
+    public void performJump()
+    {
+        //Set player animation
+        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
+        //playerAnimation.animationFinished += hasFailedTackle;
+
+        //Move the player to the tile he is tackling to
+        setIndex(m_tackleToIndex);
 
         //Set the player has already performed an action
         m_hasPerformedAction = true;

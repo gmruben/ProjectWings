@@ -1,19 +1,29 @@
 using UnityEngine;
+using System;
 using System.Collections;
 
 public class FX02 : MonoBehaviour
 {
-    public Animation m_animation;
-    public AnimationHandler m_animationHandler;
+    public Action e_end;
+
+    public AnimationHandler m_animation;
 
     public void init()
     {
-        m_animation.Play("FX02");
-        m_animationHandler.e_animationEnd += animationEnd;
+        m_animation.init();
+        m_animation.playAnimation("FX02_Animation");
+
+        m_animation.e_animationEnd += animationEnd;
     }
 
     private void animationEnd()
     {
-        Destroy(gameObject);
+        if (e_end != null)
+        {
+            e_end();
+            e_end = null;
+        }
+
+        GameObject.Destroy(gameObject);
     }
 }

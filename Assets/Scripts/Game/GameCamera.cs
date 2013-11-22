@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public class GameCamera : MonoBehaviour
 {
+    private const float c_fieldOfView = 25.0f;
     private const float c_zoomSpeed = 10.0f;
 
     private Camera c_Camera;
@@ -24,7 +25,7 @@ public class GameCamera : MonoBehaviour
     {
         if (m_target)
         {
-            transform.position = new Vector3(m_target.position.x, transform.position.y, -9.5f); //m_target.position.z - 12.5f);
+            transform.position = new Vector3(m_target.position.x, transform.position.y, -9.5f);
         }
     }
 
@@ -35,7 +36,7 @@ public class GameCamera : MonoBehaviour
 
     private void tackleBattleStart()
     {
-        StartCoroutine(zoomIn());
+        //StartCoroutine(zoomIn());
     }
 
     private IEnumerator zoomIn()
@@ -45,8 +46,5 @@ public class GameCamera : MonoBehaviour
             c_Camera.fieldOfView -= Time.deltaTime * c_zoomSpeed;
             yield return new WaitForSeconds(Time.deltaTime);
         }
-
-        SceneManager.instance.playTackle02(); // GUIManager.instance.createTackle02Scene();
-        //SceneManager.instance.e_sceneFinished += dribbleEnded;
     }
 }

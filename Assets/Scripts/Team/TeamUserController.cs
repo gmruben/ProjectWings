@@ -5,6 +5,7 @@ public class TeamUserController : TeamController
 {
     private Player m_currentPlayer;
     private Cursor m_cursor;
+    private Arrow m_arrow;
 
     private PlayerMenu m_currentMenu;
 
@@ -15,10 +16,14 @@ public class TeamUserController : TeamController
 
         m_cursor = ApplicationFactory.instance.m_entityCreator.createCursor();
         m_cursor.init();
+
+        //m_arrow = ApplicationFactory.instance.m_entityCreator.createArrow();
     }
 
-    public override void startPhase()
+    public override void startTurn()
     {
+        m_cursor.setIndex(m_team.m_playerList[1].Index);
+
         //Add listener
         m_cursor.e_end += startPlayerTurn;
     }
@@ -32,7 +37,7 @@ public class TeamUserController : TeamController
             m_currentPlayer = m_board.getPlayerAtIndex(index);
 
             //If player hasn't ended his turn yet and it is on my team
-            if (!m_currentPlayer.m_hasEndedTurn &&  m_currentPlayer.team.m_user == m_team.m_user)
+            if (!m_currentPlayer.m_hasEndedTurn && m_currentPlayer.team.m_user == m_team.m_user)
             {
                 //Remove listeners
                 m_cursor.e_end -= startPlayerTurn;
@@ -58,15 +63,19 @@ public class TeamUserController : TeamController
         m_currentMenu.e_selected -= optionSelected;
         m_currentMenu.e_cancel -= cancelBox;
 
-        /*if (optionId == PlayerAction.Move)
+        switch (optionId)
         {
-            m_board.drawTileRadius(m_currentPlayer.Index, 3);
-            setArrowActive();
+            case PlayerAction.Move:
+                m_board.drawTileRadius(m_currentPlayer.Index, 3);
 
-            m_arrow.e_end += endMove;
-            m_arrow.e_cancel += cancelMove;
+                m_arrow.gameObject.SetActiveRecursively(true);
+                m_arrow.init(m_currentPlayer.Index, (m_currentPlayer.isFliped ? -1 : 1));
+
+                //m_arrow.e_end += endMove;
+                //m_arrow.e_cancel += cancelMove;
+                break;
         }
-        else if (optionId == PlayerAction.Pass)
+        /*else if (optionId == PlayerAction.Pass)
         {
             m_cursor.gameObject.SetActiveRecursively(true);
             m_camera.setTarget(m_cursor.transform);
@@ -85,7 +94,6 @@ public class TeamUserController : TeamController
             m_board.drawShoot(m_currentPlayer.Index);
 
             //Add listeners
-            //m_cursor.e_end += shootTo;
             m_cursor.e_end += showShotScene;
             m_cursor.e_cancel += cancelShoot;
         }
@@ -120,9 +128,9 @@ public class TeamUserController : TeamController
             setCursorActive();
             m_cursor.e_end += tackleTo;
             m_cursor.e_cancel += cancelMove;
-        }
+        }*/
 
-        Destroy(m_currentMenu.gameObject);*/
+        GameObject.Destroy(m_currentMenu.gameObject);
     }
 
     private void cancelBox()

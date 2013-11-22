@@ -15,7 +15,7 @@ public class Game : MonoBehaviour
     public GameObject m_arrowPrefab;
 
     private Board m_board;
-    private Cursor m_cursor;
+    //private Cursor m_cursor;
     private Arrow m_arrow;
     private Ball m_ball;
 
@@ -23,6 +23,7 @@ public class Game : MonoBehaviour
 
     private GameCamera m_camera;
 
+    private Team m_currentTeam;
     private Player m_currentPlayer;
     private int m_turnIndex;
     private int m_currentPhase;
@@ -49,21 +50,21 @@ public class Game : MonoBehaviour
     {
         m_ball = (GameObject.Instantiate(m_ballPrefab) as GameObject).GetComponent<Ball>();
         m_board = GameObject.FindGameObjectWithTag("Board").GetComponent<Board>();
-        m_cursor = GameObject.FindGameObjectWithTag("Cursor").GetComponent<Cursor>();
+        //m_cursor = GameObject.FindGameObjectWithTag("Cursor").GetComponent<Cursor>();
 
         m_board.init(m_ball);
         m_ball.init(m_board);
-        m_cursor.init();
+        //m_cursor.init();
 
         m_arrow = (GameObject.Instantiate(m_arrowPrefab) as GameObject).GetComponent<Arrow>();
         m_arrow.gameObject.SetActiveRecursively(false);
 
         m_camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameCamera>();
-        m_camera.setTarget(m_cursor.transform);
+        //m_camera.setTarget(m_cursor.transform);
 
         //Instantiate teams
-        m_team1 = new Team();
-        m_team2 = new Team();
+        m_team1 = new Team(m_board);
+        m_team2 = new Team(m_board);
 
         m_team1.m_opponentTeam = m_team2;
         m_team2.m_opponentTeam = m_team1;
@@ -87,7 +88,7 @@ public class Game : MonoBehaviour
             if (player.m_tileX == 8 && player.m_tileY == 7)
             {
                 p.setBall(m_ball);
-                m_cursor.setIndex(p.Index);
+                //m_cursor.setIndex(p.Index);
             }
 
             //Add player to the team
@@ -112,6 +113,7 @@ public class Game : MonoBehaviour
         }
 
         //P1 starts
+        m_currentTeam = m_team1;
         m_currentPhase = User.P1;
         m_turnIndex = c_numberOfTurnsInAPhase;
         if (e_startPhase != null) e_startPhase(m_currentPhase);
@@ -120,10 +122,23 @@ public class Game : MonoBehaviour
         m_gameMode = GameModes.P1VsP2;
 
         //Add listeners
-        m_cursor.e_end += selectPlayer;
+        //m_cursor.e_end += selectPlayer;
+
+        PlayerTurnAnimation playerTurnAnimation = GUIManager.instance.createPlayerTurnAnimation();
+        playerTurnAnimation.init();
+        playerTurnAnimation.e_end += startPlayerTurn;
     }
 
-    public void selectPlayer(Vector2 index)
+    /// <summary>
+    /// Starts next player turn
+    /// </summary>
+    private void startPlayerTurn()
+    {
+        m_currentTeam.startTurn();
+        //SceneManager.instance.playTackle02();
+    }
+
+    /*public void selectPlayer(Vector2 index)
     {
         //If there is a player on the tile
         if (m_board.isPlayerOnTile(index))
@@ -141,23 +156,23 @@ public class Game : MonoBehaviour
                 showPlayerMenu();
             }
         }
-    }
+    }*/
 
     private bool isPlayerSelectable()
     {
         return (m_gameMode == GameModes.P1VsP2 && m_currentPlayer.team.m_user == m_currentPhase);
     }
 
-    public void showPlayerMenu()
+    /*public void showPlayerMenu()
     {
         m_box = (GameObject.Instantiate(m_boxPrefab) as GameObject).GetComponent<PlayerMenu>();
         m_box.init(m_currentPlayer);
 
         m_box.e_selected += optionSelected;
         m_box.e_cancel += cancelBox;
-    }
+    }*/
 
-    public void optionSelected(int optionId)
+    /*public void optionSelected(int optionId)
     {
         //Remove listeners
         m_box.e_selected -= optionSelected;
@@ -228,7 +243,7 @@ public class Game : MonoBehaviour
         }
 
         Destroy(m_box.gameObject);
-    }
+    }*/
 
     private void setArrowActive()
     {
@@ -238,12 +253,12 @@ public class Game : MonoBehaviour
     
     private void setCursorActive()
     {
-        m_cursor.gameObject.SetActiveRecursively(true);
-        m_cursor.setIndex(m_currentPlayer.Index);
-        m_camera.setTarget(m_cursor.transform);
+        //m_cursor.gameObject.SetActiveRecursively(true);
+        //m_cursor.setIndex(m_currentPlayer.Index);
+        //m_camera.setTarget(m_cursor.transform);
     }
 
-    private void cancelBox()
+    /*private void cancelBox()
     {
         //Remove listeners
         m_box.e_selected -= optionSelected;
@@ -252,7 +267,7 @@ public class Game : MonoBehaviour
         m_box.gameObject.SetActiveRecursively(false);
 
         setCursorActive();
-    }
+    }*/
 
     private void endMove(List<Vector2> pTileIndexList)
     {
@@ -272,7 +287,7 @@ public class Game : MonoBehaviour
         m_arrow.e_end -= endMove;
         m_arrow.e_cancel -= cancelMove;
 
-        showPlayerMenu();
+        //showPlayerMenu();
     }
 
     private void currentPlayerMoveFinished()
@@ -280,7 +295,7 @@ public class Game : MonoBehaviour
         //Remove listeners
         m_currentPlayer.moveFinishedEvent -= currentPlayerMoveFinished;
 
-        showPlayerMenu();
+        //showPlayerMenu();
     }
 
     /// <summary>
@@ -290,10 +305,10 @@ public class Game : MonoBehaviour
     private void passTo(Vector2 pIndex)
     {
         //Remove listeners
-        m_cursor.e_end -= passTo;
+        //m_cursor.e_end -= passTo;
 
         //Hide the cursor
-        m_cursor.gameObject.SetActiveRecursively(false);
+        //m_cursor.gameObject.SetActiveRecursively(false);
 
         //Add listeners
         m_ball.moveFinishedEvent += passFinished;
@@ -307,14 +322,14 @@ public class Game : MonoBehaviour
         //Remove listeners
         m_ball.moveFinishedEvent -= passFinished;
 
-        showPlayerMenu();
+        //showPlayerMenu();
     }
 
     private void showShotScene(Vector2 pIndex)
     {
         //Remove listeners
-        m_cursor.e_end -= showShotScene;
-        m_cursor.e_cancel -= cancelShoot;
+        //m_cursor.e_end -= showShotScene;
+        //m_cursor.e_cancel -= cancelShoot;
 
         Scene scene = GUIManager.instance.createVolleyShotScene();
         scene.play();
@@ -328,7 +343,7 @@ public class Game : MonoBehaviour
     private void shootTo() //Vector2 pIndex)
     {
         //Hide the cursor
-        m_cursor.gameObject.SetActiveRecursively(false);
+        //m_cursor.gameObject.SetActiveRecursively(false);
 
         //Add listeners
         m_ball.moveFinishedEvent += passFinished;
@@ -343,8 +358,8 @@ public class Game : MonoBehaviour
     private void cancelShoot()
     {
         //Remove listeners
-        m_cursor.e_end -= showShotScene;
-        m_cursor.e_cancel -= cancelShoot;
+        //m_cursor.e_end -= showShotScene;
+        //m_cursor.e_cancel -= cancelShoot;
     }
 
     private void tackleTo(Vector2 pIndex)
@@ -358,11 +373,11 @@ public class Game : MonoBehaviour
             if (player.team.m_user != m_currentPhase && player.hasBall)
             {
                 //Remove listeners
-                m_cursor.e_end -= tackleTo;
-                m_cursor.e_cancel -= cancelMove;
+                //m_cursor.e_end -= tackleTo;
+                //m_cursor.e_cancel -= cancelMove;
 
                 //Hide the cursor
-                m_cursor.gameObject.SetActiveRecursively(false);
+                //m_cursor.gameObject.SetActiveRecursively(false);
 
                 //Add listeners
                 m_currentPlayer.e_actionEnd += tackleEnd;
@@ -382,7 +397,7 @@ public class Game : MonoBehaviour
         //Clear board
         m_board.clearTileRadius();
 
-        showPlayerMenu();
+        //showPlayerMenu();
     }
 }
 

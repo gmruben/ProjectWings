@@ -1,26 +1,25 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 
-public class SceneManager2 : MonoBehaviour
+public class Scene_Start : Scene
 {
-    private const float m_speed = 50;
+    private const float m_speed = 250;
     private const float m_sceenHeight = 90;
-
-    public Action e_end;
 
     public exSoftClip m_background;
 
     private float m_height;
-    private List<Scene> m_sceneList;
 
-    public void play(List<Scene> pSceneList)
+    void Start()
+    {
+        play();
+    }
+
+    public void play()
     {
         m_background.height = 0;
         m_height = 0;
-
-        m_sceneList = pSceneList;
 
         StartCoroutine(updateBG());
     }
@@ -36,7 +35,9 @@ public class SceneManager2 : MonoBehaviour
         }
 
         m_background.height = m_sceenHeight;
-
         if (e_end != null) e_end();
+
+        //Clean all actions
+        cleanAllActions();
     }
 }

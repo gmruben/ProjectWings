@@ -5,6 +5,7 @@ public class ApplicationFactory : MonoBehaviour
 {
     //ENTITY PREFABS
     public GameObject m_cursor;
+    public GameObject m_arrow;
     public GameObject m_emptyExSpritePrefab;
 
     private static ApplicationFactory _instance;

@@ -88,10 +88,16 @@ public class PlayerController : MonoBehaviour
                     if (m_board.isPlayerOnTile(new Vector2(x, y)))
                     {
                         Player player = m_board.getPlayerAtIndex(new Vector2(x, y));
-                        if (player.isGonnaTackle())
+                        if (player != null && player.isGonnaTackle())
                         {
                             ApplicationFactory.instance.m_messageBus.dispatchTackleBattleStart();
-                            ApplicationFactory.instance.m_fxManager.createFX02(player.transform.position);
+                            
+                            FX02 fx = ApplicationFactory.instance.m_fxManager.createFX02(player.transform.position);
+                            fx.init();
+                            fx.e_end += tackleSceneEnd;
+
+                            player.tackleTo(Index);
+                            m_player.jumpTo(Index);
 
                             return true;
                         }
@@ -101,6 +107,12 @@ public class PlayerController : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void tackleSceneEnd()
+    {
+        SceneManager.instance.playTackle02(User.P1, User.P2);
+        SceneManager.instance.e_sceneFinished += dribbleEnded;
     }
 
     private void dribbleEnded()

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class TeamAIController : TeamController
 {
@@ -7,11 +8,18 @@ public class TeamAIController : TeamController
 
     public override void init(Board pBoard, Team pTeam)
     {
-        m_teamAI.init();
+        m_board = pBoard;
+        m_team = pTeam;
+
+        //m_teamAI.init();
     }
 
-    public override void startPhase()
+    public override void startTurn()
     {
-        
+        List<Vector2> list = new List<Vector2>();
+        list.Add(new Vector2(0, 0));
+        list.Add(new Vector2(1, 0));
+        list.Add(new Vector2(1, 1));
+        m_team.m_playerList[5].move(list);
     }
 }

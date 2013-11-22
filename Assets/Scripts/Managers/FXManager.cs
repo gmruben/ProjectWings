@@ -5,9 +5,9 @@ public class FXManager : MonoBehaviour
 {
     public GameObject FX02;
 
-    public void createFX02(Vector3 pPosition)
+    public FX02 createFX02(Vector3 pPosition)
     {
         FX02 fx = (GameObject.Instantiate(FX02, pPosition, Quaternion.identity) as GameObject).GetComponent<FX02>();
-        fx.init();
+        return fx;
     }
 }

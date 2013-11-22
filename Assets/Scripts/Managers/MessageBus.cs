@@ -5,6 +5,8 @@ public class MessageBus
     public Action TackleBattleStart;
     public Action PlayerMoveEnded;
 
+    public Action CurrentSceneEnded;
+
     public void dispatchTackleBattleStart()
     {
         if (TackleBattleStart != null) TackleBattleStart();
@@ -15,9 +17,16 @@ public class MessageBus
         if (PlayerMoveEnded != null) PlayerMoveEnded();
     }
 
+    public void dispatchCurrentSceneEnded()
+    {
+        if (CurrentSceneEnded != null) CurrentSceneEnded();
+    }
+
     public void cleanAllActions()
     {
         TackleBattleStart = null;
         PlayerMoveEnded = null;
+
+        CurrentSceneEnded = null;
     }
 }

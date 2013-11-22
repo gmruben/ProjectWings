@@ -7,5 +7,5 @@ public class TeamController
     protected Team m_team;
 
     public virtual void init(Board pBoard, Team pTeam) { }
-    public virtual void startPhase() { }
+    public virtual void startTurn() { }
 }

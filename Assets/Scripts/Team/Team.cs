@@ -7,7 +7,7 @@ public class Team
     //Team GK
     private Player m_gk;
     //List of all the player in the team
-    private List<Player> m_playerList;
+    public List<Player> m_playerList;
 
     //Player with the ball
     private Player m_playerWithTheBall;
@@ -17,9 +17,15 @@ public class Team
     private string m_ID;
     public int m_user;
 
-    public Team()
+    private TeamController m_teamController;
+
+    public Team(Board pBoard)
     {
         m_playerList = new List<Player>();
+
+        //Initialize team controller
+        m_teamController = new TeamUserController();
+        m_teamController.init(pBoard, this);
     }
 
     public void tacklePlayer(Player opponent)
@@ -59,6 +65,11 @@ public class Team
         {
             m_playerWithTheBall = pPlayer;
         }
+    }
+
+    public void startTurn()
+    {
+        m_teamController.startTurn();
     }
 
     #region PROPERTIES

@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class SceneAnimation : MonoBehaviour
+public class AnimationHandler : MonoBehaviour
 {
     public Action e_animationEnd;
 
@@ -34,7 +34,7 @@ public class SceneAnimation : MonoBehaviour
         GetComponent<exSpriteAnimation>().Play(pAnimationName);
     }
 
-	public void OnAnimationEnd()
+	private void OnAnimationEnd()
     {
 	    if (e_animationEnd != null) e_animationEnd();
 	}

@@ -4,8 +4,8 @@ using System.Collections;
 
 public class Scene_PlayerHurt : Scene
 {
-    public SceneAnimation m_background;
-    public SceneAnimation m_playerAnimation;
+    public AnimationHandler m_background;
+    public AnimationHandler m_playerAnimation;
 
     private float width;
 

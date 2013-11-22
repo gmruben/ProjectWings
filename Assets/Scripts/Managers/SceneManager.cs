@@ -25,9 +25,13 @@ public class SceneManager : MonoBehaviour
         scene.e_end += sceneFinished;
     }
 
-    public void playTackle02()
+    public void playTackle02(int pTeamUser1, int pTeamUser2)
     {
         m_sceneList = new List<Scene>();
+
+        Scene startScene = GUIManager.instance.createStartScene();
+        startScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(startScene);
 
         Scene tackleScene = GUIManager.instance.createTackle02Scene();
         tackleScene.gameObject.SetActiveRecursively(false);
@@ -62,12 +66,14 @@ public class SceneManager : MonoBehaviour
         }
         else
         {
-            if (e_sceneFinished != null) e_sceneFinished();
+            sceneFinished();
         }
     }
 
     private void sceneFinished()
     {
+        ApplicationFactory.instance.m_messageBus.dispatchCurrentSceneEnded();
+
         if (e_sceneFinished != null) e_sceneFinished();
     }
 
