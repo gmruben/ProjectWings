@@ -23,6 +23,8 @@ public class PlayerController : MonoBehaviour
 
     private Vector2 m_index;
 
+    private Vector2 m_tackleToIndex;
+
     public void init(Player pPlayer, Transform pTransform, Board pBoard)
     {
         m_transform = pTransform;
@@ -60,19 +62,27 @@ public class PlayerController : MonoBehaviour
         }
 
         Index = nextSquareIndex;
-        m_toMoveSquareList.RemoveAt(0);
 
-        //Check if any player around is gonna tackle
-        if (!checkPlayersAround())
+        if (m_toMoveSquareList.Count == 0)
         {
-            if (m_toMoveSquareList.Count > 0)
+
+        }
+        else
+        {
+            m_toMoveSquareList.RemoveAt(0);
+
+            //Check if any player around is gonna tackle
+            if (!checkPlayersAround())
             {
-                StartCoroutine(moveToNextSquare());
-            }
-            else
-            {
-                m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
-                ApplicationFactory.instance.m_messageBus.dispatchPlayerMoveEnded();
+                if (m_toMoveSquareList.Count > 0)
+                {
+                    StartCoroutine(moveToNextSquare());
+                }
+                else
+                {
+                    m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
+                    ApplicationFactory.instance.m_messageBus.dispatchPlayerMoveEnded();
+                }
             }
         }
     }
@@ -88,7 +98,7 @@ public class PlayerController : MonoBehaviour
                     if (m_board.isPlayerOnTile(new Vector2(x, y)))
                     {
                         Player player = m_board.getPlayerAtIndex(new Vector2(x, y));
-                        if (player != null && player.isGonnaTackle())
+                        if (player != null && !player.m_hasReacted && player.team.m_user != m_player.team.m_user && player.isGonnaTackle())
                         {
                             ApplicationFactory.instance.m_messageBus.dispatchTackleBattleStart();
                             
@@ -96,8 +106,20 @@ public class PlayerController : MonoBehaviour
                             fx.init();
                             fx.e_end += tackleSceneEnd;
 
+                            //Tackle to the opponent's tile
                             player.tackleTo(Index);
-                            m_player.jumpTo(Index);
+
+                            if (m_toMoveSquareList.Count == 0)
+                            {
+                                //If it is the last square in the list, jump to the opponent's tile
+                                jumpTo(player.Index);
+                            }
+                            else
+                            {
+                                //If it is not the last square, jump to the next one
+                                jumpTo(m_toMoveSquareList[0]);
+                                m_toMoveSquareList.RemoveAt(0);
+                            }
 
                             return true;
                         }
@@ -112,13 +134,64 @@ public class PlayerController : MonoBehaviour
     private void tackleSceneEnd()
     {
         SceneManager.instance.playTackle02(User.P1, User.P2);
-        SceneManager.instance.e_sceneFinished += dribbleEnded;
     }
 
-    private void dribbleEnded()
+    public void tackleTo(Vector2 pIndex)
     {
+        m_player.m_hasReacted = true;
+
+        m_tackleToIndex = pIndex;
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performTackle;
+    }
+
+    public void jumpTo(Vector2 pIndex)
+    {
+        m_tackleToIndex = pIndex;
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performJump;
+    }
+
+    private void performTackle()
+    {
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded -= performTackle;
+
+        m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Tackle);
+        StartCoroutine(tackleCoroutine());
+    }
+
+    private IEnumerator tackleCoroutine()
+    {
+        Vector2 direction = m_tackleToIndex - Index;
+        while ((new Vector2(transform.position.x, transform.position.z) - m_tackleToIndex).sqrMagnitude > 0.005f)
+        {
+            transform.position += new Vector3(direction.x, 0, direction.y) * 2.5f * Time.deltaTime;
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+        Index = m_tackleToIndex;
+
+        m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
+    }
+
+    private void performJump()
+    {
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded -= performJump;
+
+        m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
+        StartCoroutine(jumpCoroutine());
+    }
+
+    private IEnumerator jumpCoroutine()
+    {
+        Vector2 direction = m_tackleToIndex - Index;
+        while ((new Vector2(transform.position.x, transform.position.z) - m_tackleToIndex).sqrMagnitude > 0.005f)
+        {
+            transform.position += new Vector3(direction.x, 0, direction.y) * 2.5f * Time.deltaTime;
+            yield return new WaitForSeconds(Time.deltaTime);
+        }
+        Index = m_tackleToIndex;
+
         if (m_toMoveSquareList.Count > 0)
         {
+            m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Run);
             StartCoroutine(moveToNextSquare());
         }
         else

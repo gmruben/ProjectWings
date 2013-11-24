@@ -24,6 +24,7 @@ public class Player : MonoBehaviour
     public bool m_hasMoved = false;
     public bool m_hasPerformedAction = false;
     public bool m_hasEndedTurn = false;
+    public bool m_hasReacted = false;
 
     private Team m_team;
 
@@ -114,7 +115,14 @@ public class Player : MonoBehaviour
 
     public void shootTo()
     {
-        //Set player animation
+        SceneManager.instance.playShot(User.P1);
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performShot;
+    }
+
+    private void performShot()
+    {
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded -= performShot;
+
         playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Shoot);
         playerAnimation.animationFinished += shootAnimationFinished;
 
@@ -127,42 +135,24 @@ public class Player : MonoBehaviour
         m_hasPerformedAction = true;
     }
 
-    public void tackleTo(Vector2 pIndex)
+    public void blockTo()
     {
-        m_tackleToIndex = pIndex;
-        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performTackle;
+        m_hasReacted = true;
     }
 
-    public void jumpTo(Vector2 pIndex)
+    public void catchTo()
     {
-        m_tackleToIndex = pIndex;
-        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performJump;
+        m_hasReacted = true;
+
+        SceneManager.instance.playShot(User.P1);
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performCatch;
     }
 
-    public void performTackle()
+    private void performCatch()
     {
-        //Set player animation
-        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Tackle);
-        playerAnimation.animationFinished += hasFailedTackle;
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded -= performCatch;
 
-        //Move the player to the tile he is tackling to
-        setIndex(m_tackleToIndex);
-
-        //Set the player has already performed an action
-        m_hasPerformedAction = true;
-    }
-
-    public void performJump()
-    {
-        //Set player animation
-        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
-        //playerAnimation.animationFinished += hasFailedTackle;
-
-        //Move the player to the tile he is tackling to
-        setIndex(m_tackleToIndex);
-
-        //Set the player has already performed an action
-        m_hasPerformedAction = true;
+        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Catch);
     }
 
     private void hasFailedTackle()
@@ -242,6 +232,11 @@ public class Player : MonoBehaviour
     public bool isGonnaTackle()
     {
         return true; // UnityEngine.Random.Range(0.0f, 1.0f) > 0.5f;
+    }
+
+    public void tackleTo(Vector2 pIndex)
+    {
+        playerController.tackleTo(pIndex);
     }
 
     #region PROPERTIES

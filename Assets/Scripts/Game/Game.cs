@@ -15,7 +15,6 @@ public class Game : MonoBehaviour
     public GameObject m_arrowPrefab;
 
     private Board m_board;
-    //private Cursor m_cursor;
     private Arrow m_arrow;
     private Ball m_ball;
 
@@ -50,17 +49,14 @@ public class Game : MonoBehaviour
     {
         m_ball = (GameObject.Instantiate(m_ballPrefab) as GameObject).GetComponent<Ball>();
         m_board = GameObject.FindGameObjectWithTag("Board").GetComponent<Board>();
-        //m_cursor = GameObject.FindGameObjectWithTag("Cursor").GetComponent<Cursor>();
-
+        
         m_board.init(m_ball);
         m_ball.init(m_board);
-        //m_cursor.init();
 
         m_arrow = (GameObject.Instantiate(m_arrowPrefab) as GameObject).GetComponent<Arrow>();
         m_arrow.gameObject.SetActiveRecursively(false);
 
         m_camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameCamera>();
-        //m_camera.setTarget(m_cursor.transform);
 
         //Instantiate teams
         m_team1 = new Team(m_board);
@@ -88,7 +84,6 @@ public class Game : MonoBehaviour
             if (player.m_tileX == 8 && player.m_tileY == 7)
             {
                 p.setBall(m_ball);
-                //m_cursor.setIndex(p.Index);
             }
 
             //Add player to the team
@@ -120,9 +115,6 @@ public class Game : MonoBehaviour
 
         //Set game mode
         m_gameMode = GameModes.P1VsP2;
-
-        //Add listeners
-        //m_cursor.e_end += selectPlayer;
 
         PlayerTurnAnimation playerTurnAnimation = GUIManager.instance.createPlayerTurnAnimation();
         playerTurnAnimation.init();
@@ -276,7 +268,7 @@ public class Game : MonoBehaviour
         m_arrow.e_cancel -= cancelMove;
 
         m_currentPlayer.move(pTileIndexList);
-        m_currentPlayer.moveFinishedEvent += currentPlayerMoveFinished;
+        //m_currentPlayer.moveFinishedEvent += currentPlayerMoveFinished;
 
         m_board.clearTileRadius();
     }
@@ -286,14 +278,6 @@ public class Game : MonoBehaviour
         //Remove listeners
         m_arrow.e_end -= endMove;
         m_arrow.e_cancel -= cancelMove;
-
-        //showPlayerMenu();
-    }
-
-    private void currentPlayerMoveFinished()
-    {
-        //Remove listeners
-        m_currentPlayer.moveFinishedEvent -= currentPlayerMoveFinished;
 
         //showPlayerMenu();
     }
@@ -384,7 +368,7 @@ public class Game : MonoBehaviour
 
                 //Tackle
                 player.hasBeenTackledFrom(m_currentPlayer.Index);
-                m_currentPlayer.tackleTo(pIndex);
+                //m_currentPlayer.tackleTo(pIndex);
             }
         }
     }

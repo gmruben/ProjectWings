@@ -44,6 +44,55 @@ public class SceneManager : MonoBehaviour
         playScene();
     }
 
+    public void playShot(int pTeamUser)
+    {
+        m_sceneList = new List<Scene>();
+
+        Scene startScene = GUIManager.instance.createStartScene();
+        startScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(startScene);
+
+        Scene shotScene = GUIManager.instance.createVolleyShotScene();
+        shotScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(shotScene);
+
+        playScene();
+    }
+
+    public void playCatch_Goal(int pTeamUser1)
+    {
+        m_sceneList = new List<Scene>();
+
+        Scene startScene = GUIManager.instance.createStartScene();
+        startScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(startScene);
+
+        Scene catchScene = GUIManager.instance.createCatchScene();
+        catchScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(catchScene);
+
+        Scene goalScene = GUIManager.instance.createCatchScene();
+        goalScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(goalScene);
+
+        playScene();
+    }
+
+    public void playCatch_NoGoal(int pTeamUser1)
+    {
+        m_sceneList = new List<Scene>();
+
+        Scene startScene = GUIManager.instance.createStartScene();
+        startScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(startScene);
+
+        Scene catchScene = GUIManager.instance.createCatchScene();
+        catchScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(catchScene);
+
+        playScene();
+    }
+
     #endregion
 
     private void playScene()

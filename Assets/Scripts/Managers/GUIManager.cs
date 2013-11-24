@@ -9,6 +9,8 @@ public class GUIManager : MonoBehaviour
     public GameObject m_tackleScene;
     public GameObject m_tackle02Scene;
     public GameObject m_jumpScene;
+    public GameObject m_catchScene;
+    public GameObject m_goalScene;
 
     public GameObject m_playerMenuPrefab;
     public GameObject m_yesNoMenuPrefab;
@@ -83,6 +85,18 @@ public class GUIManager : MonoBehaviour
     public Scene createJumpScene()
     {
         Scene scene = (GameObject.Instantiate(m_jumpScene) as GameObject).GetComponent<Scene>();
+        return scene;
+    }
+
+    public Scene createCatchScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_catchScene) as GameObject).GetComponent<Scene>();
+        return scene;
+    }
+
+    public Scene createGoalScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_goalScene) as GameObject).GetComponent<Scene>();
         return scene;
     }
 

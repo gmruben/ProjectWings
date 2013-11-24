@@ -6,6 +6,8 @@ public class Cursor : MonoBehaviour
 {
     private const float COUNTER_TIME = 0.10f;
 
+    private GameObject m_cachedGameObject;
+
     private Game m_game;
     private Board board;
     private Vector2 m_index;
@@ -18,8 +20,17 @@ public class Cursor : MonoBehaviour
 
     public void init()
     {
+        m_cachedGameObject = gameObject;
+
         m_index = Vector2.zero;
         counter = 0;
+
+        setActive(false);
+    }
+
+    public void setActive(bool pIsActive)
+    {
+        gameObject.SetActiveRecursively(pIsActive);
     }
 
     public void setIndex(Vector2 pIndex)
