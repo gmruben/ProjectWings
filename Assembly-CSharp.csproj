@@ -88,13 +88,14 @@
      <Compile Include="Assets\Scripts\Scenes\Scene.cs" />
      <Compile Include="Assets\Scripts\Scenes\SceneHandler.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_BallShot.cs" />
-     <Compile Include="Assets\Scripts\Scenes\Scene_GKCatch.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_GKCatch_Goal.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_GKCatch_NoGoal.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_Goal.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerDash.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerHurt.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerJump.cs" />
-     <Compile Include="Assets\Scripts\Scenes\Scene_PlayerTackle.cs" />
-     <Compile Include="Assets\Scripts\Scenes\Scene_PlayerTackle02.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_PlayerTackle_Dribble.cs" />
+     <Compile Include="Assets\Scripts\Scenes\Scene_PlayerTackle_NoDribble.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_PlayerVolleyShot.cs" />
      <Compile Include="Assets\Scripts\Scenes\Scene_Start.cs" />
      <Compile Include="Assets\Scripts\SpriteTrail.cs" />

@@ -11,8 +11,7 @@ public class Ball : MonoBehaviour
     private Vector2 m_targetTileIndex;
     private bool m_isMoving = false;
 
-    private float m_shotSpeed = 5.0f;
-    private bool m_inShot = false;
+    private float m_shotSpeed = 15.0f;
 
     private float m_accY;
     private float m_speedY;
@@ -56,19 +55,6 @@ public class Ball : MonoBehaviour
                 moveFinishedEvent();
             }
         }
-
-        /*if (m_inShot)
-        {
-            transform.position += new Vector3(m_direction.x * m_shotSpeed, m_speedY, m_direction.y * m_shotSpeed) * Time.deltaTime;
-
-            //Check if we are on the goal tile
-            if (transform.position.x > (Board.SIZEX - 1) * Board.c_tileSize)
-            {
-                m_player.team.opponentTeam.GK.showContextualMenu();
-
-                m_inShot = false;
-            }
-        }*/
 	}
 
     /// <summary>
@@ -153,7 +139,10 @@ public class Ball : MonoBehaviour
 
                             if (player.isGK)
                             {
-                                fx.e_end += startCatch;
+                                bool isGoal = UnityEngine.Random.RandomRange(0.0f, 1.0f) > 0.5f;
+                                if (isGoal) fx.e_end += startCatchGoal;
+                                else fx.e_end += startCatchNoGoal;
+
                                 player.catchTo();
                             }
                             else
@@ -172,9 +161,15 @@ public class Ball : MonoBehaviour
         return false;
     }
 
-    private void startCatch()
+    private void startCatchGoal()
     {
         SceneManager.instance.playCatch_Goal(User.P1);
+        SceneManager.instance.e_sceneFinished += endCatch;
+    }
+
+    private void startCatchNoGoal()
+    {
+        SceneManager.instance.playCatch_NoGoal(User.P1);
         SceneManager.instance.e_sceneFinished += endCatch;
     }
 
@@ -185,7 +180,7 @@ public class Ball : MonoBehaviour
 
     private void startBlock()
     {
-        SceneManager.instance.playTackle02(User.P1, User.P2);
+        SceneManager.instance.playTackle_Dribble(User.P1, User.P2);
         SceneManager.instance.e_sceneFinished += blockEnd;
     }
 

@@ -309,17 +309,6 @@ public class Game : MonoBehaviour
         //showPlayerMenu();
     }
 
-    private void showShotScene(Vector2 pIndex)
-    {
-        //Remove listeners
-        //m_cursor.e_end -= showShotScene;
-        //m_cursor.e_cancel -= cancelShoot;
-
-        Scene scene = GUIManager.instance.createVolleyShotScene();
-        scene.play();
-        scene.e_end += shootTo;
-    }
-
     /// <summary>
     /// Shoot the ball to a tile
     /// </summary>
@@ -346,7 +335,7 @@ public class Game : MonoBehaviour
         //m_cursor.e_cancel -= cancelShoot;
     }
 
-    private void tackleTo(Vector2 pIndex)
+    /*private void tackleTo(Vector2 pIndex)
     {
          //If there is a player on the tile
         if (m_board.isPlayerOnTile(pIndex))
@@ -371,7 +360,7 @@ public class Game : MonoBehaviour
                 //m_currentPlayer.tackleTo(pIndex);
             }
         }
-    }
+    }*/
 
     private void tackleEnd()
     {

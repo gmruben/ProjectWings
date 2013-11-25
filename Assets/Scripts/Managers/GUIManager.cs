@@ -6,10 +6,12 @@ public class GUIManager : MonoBehaviour
     //SCENES
     public GameObject m_startScene;
     public GameObject m_volleyShotScene;
-    public GameObject m_tackleScene;
-    public GameObject m_tackle02Scene;
+    public GameObject m_ballShotScene;
+    public GameObject m_tackleNoDribbleScene;
+    public GameObject m_tackleDribbleScene;
     public GameObject m_jumpScene;
-    public GameObject m_catchScene;
+    public GameObject m_gkCatchNoGoalScene;
+    public GameObject m_gkCatchGoalScene;
     public GameObject m_goalScene;
 
     public GameObject m_playerMenuPrefab;
@@ -34,11 +36,6 @@ public class GUIManager : MonoBehaviour
     {
         PlayerMenu menu = (GameObject.Instantiate(m_playerMenuPrefab) as GameObject).GetComponent<PlayerMenu>();
         return menu;
-    }
-
-    public void showDefMenu()
-    {
-
     }
 
     public PlayerMenu showGKContMenu()
@@ -69,16 +66,22 @@ public class GUIManager : MonoBehaviour
         return scene;
     }
 
-    public Scene createTackleScene()
+    public Scene createBallShotScene()
     {
-        Scene scene = (GameObject.Instantiate(m_tackleScene) as GameObject).GetComponent<Scene>();
+        Scene scene = (GameObject.Instantiate(m_ballShotScene) as GameObject).GetComponent<Scene>();
+        return scene;
+    }
+
+    public Scene createTackleNoDribbleScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_tackleNoDribbleScene) as GameObject).GetComponent<Scene>();
 
         return scene;
     }
 
-    public Scene createTackle02Scene()
+    public Scene createTackleDribbleScene()
     {
-        Scene scene = (GameObject.Instantiate(m_tackle02Scene) as GameObject).GetComponent<Scene>();
+        Scene scene = (GameObject.Instantiate(m_tackleDribbleScene) as GameObject).GetComponent<Scene>();
         return scene;
     }
 
@@ -88,9 +91,15 @@ public class GUIManager : MonoBehaviour
         return scene;
     }
 
-    public Scene createCatchScene()
+    public Scene createGKCatchNoGoalScene()
     {
-        Scene scene = (GameObject.Instantiate(m_catchScene) as GameObject).GetComponent<Scene>();
+        Scene scene = (GameObject.Instantiate(m_gkCatchNoGoalScene) as GameObject).GetComponent<Scene>();
+        return scene;
+    }
+
+    public Scene createGKCatchGoalScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_gkCatchGoalScene) as GameObject).GetComponent<Scene>();
         return scene;
     }
 

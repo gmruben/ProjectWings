@@ -18,14 +18,7 @@ public class SceneManager : MonoBehaviour
 
     #region PUBLIC FUNCTIONS
 
-    public void play(string pSceneID)
-    {
-        Scene scene = (GameObject.Instantiate(m_sceneVolleyShot) as GameObject).GetComponent<Scene>();
-        scene.play();
-        scene.e_end += sceneFinished;
-    }
-
-    public void playTackle02(int pTeamUser1, int pTeamUser2)
+    public void playTackle_Dribble(int pTeamUser1, int pTeamUser2)
     {
         m_sceneList = new List<Scene>();
 
@@ -33,13 +26,28 @@ public class SceneManager : MonoBehaviour
         startScene.gameObject.SetActiveRecursively(false);
         m_sceneList.Add(startScene);
 
-        Scene tackleScene = GUIManager.instance.createTackle02Scene();
+        Scene tackleScene = GUIManager.instance.createTackleDribbleScene();
         tackleScene.gameObject.SetActiveRecursively(false);
         m_sceneList.Add(tackleScene);
 
         Scene jumpScene = GUIManager.instance.createJumpScene();
         jumpScene.gameObject.SetActiveRecursively(false);
         m_sceneList.Add(jumpScene);
+
+        playScene();
+    }
+
+    public void playTackle_NoDribble(int pTeamUser1, int pTeamUser2)
+    {
+        m_sceneList = new List<Scene>();
+
+        Scene startScene = GUIManager.instance.createStartScene();
+        startScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(startScene);
+
+        Scene tackleScene = GUIManager.instance.createTackleNoDribbleScene();
+        tackleScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(tackleScene);
 
         playScene();
     }
@@ -56,6 +64,10 @@ public class SceneManager : MonoBehaviour
         shotScene.gameObject.SetActiveRecursively(false);
         m_sceneList.Add(shotScene);
 
+        Scene ballShotScene = GUIManager.instance.createBallShotScene();
+        ballShotScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(ballShotScene);
+
         playScene();
     }
 
@@ -67,11 +79,11 @@ public class SceneManager : MonoBehaviour
         startScene.gameObject.SetActiveRecursively(false);
         m_sceneList.Add(startScene);
 
-        Scene catchScene = GUIManager.instance.createCatchScene();
+        Scene catchScene = GUIManager.instance.createGKCatchGoalScene();
         catchScene.gameObject.SetActiveRecursively(false);
         m_sceneList.Add(catchScene);
 
-        Scene goalScene = GUIManager.instance.createCatchScene();
+        Scene goalScene = GUIManager.instance.createGoalScene();
         goalScene.gameObject.SetActiveRecursively(false);
         m_sceneList.Add(goalScene);
 
@@ -86,7 +98,7 @@ public class SceneManager : MonoBehaviour
         startScene.gameObject.SetActiveRecursively(false);
         m_sceneList.Add(startScene);
 
-        Scene catchScene = GUIManager.instance.createCatchScene();
+        Scene catchScene = GUIManager.instance.createGKCatchNoGoalScene();
         catchScene.gameObject.SetActiveRecursively(false);
         m_sceneList.Add(catchScene);
 

@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class Scene_PlayerTackle02 : Scene
+public class Scene_PlayerTackle_Dribble : Scene
 {
     public exSoftClip m_background;
 

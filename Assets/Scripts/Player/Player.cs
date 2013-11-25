@@ -144,7 +144,6 @@ public class Player : MonoBehaviour
     {
         m_hasReacted = true;
 
-        SceneManager.instance.playShot(User.P1);
         ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performCatch;
     }
 
@@ -153,37 +152,6 @@ public class Player : MonoBehaviour
         ApplicationFactory.instance.m_messageBus.CurrentSceneEnded -= performCatch;
 
         playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Catch);
-    }
-
-    private void hasFailedTackle()
-    {
-        playerAnimation.animationFinished -= hasFailedTackle;
-
-        //Set player animation
-        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
-
-        if (e_actionEnd != null) e_actionEnd();
-    }
-
-    public void hasBeenTackledFrom(Vector2 pIndex)
-    {
-        //Set player animation
-        playerAnimation.playAnimation(team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
-        playerAnimation.animationFinished += hasDodgedTackle;
-
-        //Move the player to the tile he has been tackled from
-        setIndex(pIndex);
-
-        //Set the player has already performed an action
-        m_hasPerformedAction = true;
-    }
-
-    private void hasDodgedTackle()
-    {
-        playerAnimation.animationFinished -= hasDodgedTackle;
-
-        //Set player animation
-        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
     }
 
     /// <summary>
@@ -208,35 +176,14 @@ public class Player : MonoBehaviour
         m_camera.setTarget(m_ball.transform);
     }
 
-
-    public void showContextualMenu()
-    {
-        PlayerMenu menu = GUIManager.instance.showGKContMenu();
-
-        //Add listeners
-        menu.e_selected += gkSelected;
-    }
-
-    public void gkSelected(int pOptionId)
-    {
-        switch (pOptionId)
-        {
-            case PlayerAction.Punch:
-                SceneManager.instance.play(SceneID.GKPunch);
-                break;
-            case PlayerAction.Catch:
-                break;
-        }
-    }
-
     public bool isGonnaTackle()
     {
         return true; // UnityEngine.Random.Range(0.0f, 1.0f) > 0.5f;
     }
 
-    public void tackleTo(Vector2 pIndex)
+    public void tackleTo(TackleInfo2 pTackleInfo)
     {
-        playerController.tackleTo(pIndex);
+        playerController.tackleTo(pTackleInfo);
     }
 
     #region PROPERTIES

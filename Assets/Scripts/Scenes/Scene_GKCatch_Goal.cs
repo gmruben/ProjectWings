@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 
-public class Scene_GKCatch : Scene
+public class Scene_GKCatch_Goal : Scene
 {
     public exSoftClip m_background;
 
@@ -32,24 +32,30 @@ public class Scene_GKCatch : Scene
         width = 128;
         m_background.width = width;
 
-        m_playerAnimation.playSpriteAnimation("GKCatch_GKAnimation");
-        m_playerAnimation.playAnimation("GKCatch_GK01Animation");
-        m_playerAnimation.e_animationEnd += playerAnimationFinished;
-
-        m_ballAnimation.playAnimation("GKCatch_Ball01Animation");
-        m_ballAnimation.e_animationEnd += ballAnimationEnd;
+        m_ballAnimation.playAnimation("GKCatchGoal_Ball01Animation");
+        m_ballAnimation.e_animationEnd += ball01AnimationEnd;
     }
 
-    private void ballAnimationEnd()
+    private void ball01AnimationEnd()
     {
-        m_playerAnimation.playSpriteAnimation("GKCatch_GKAnimation");
+        m_playerAnimation.playAnimation("GKCatchGoal_GK01Animation");
+        m_playerAnimation.playSpriteAnimation("GKCatchGoal_GKAnimation");
 
-        m_ballAnimation.e_animationEnd -= ballAnimationEnd;
+        m_playerAnimation.e_animationEnd += playerAnimationFinished;
+        m_ballAnimation.e_animationEnd -= ball01AnimationEnd;
     }
 
     private void playerAnimationFinished()
     {
+        m_ballAnimation.playAnimation("GKCatchGoal_Ball02Animation");
+
+        m_ballAnimation.e_animationEnd += ball02AnimationEnd;
         m_playerAnimation.e_animationEnd -= playerAnimationFinished;
+    }
+
+    private void ball02AnimationEnd()
+    {
+        m_ballAnimation.e_animationEnd -= ball02AnimationEnd;
 
         //The animation has ended
         if (e_end != null) e_end();

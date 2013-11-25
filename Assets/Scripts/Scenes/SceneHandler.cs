@@ -4,8 +4,9 @@ using System.Collections.Generic;
 
 public class SceneHandler : MonoBehaviour
 {
-    public Scene m_scene;
+    public GameObject m_scenePrefab;
 
+    private Scene m_scene;
     private List<Scene> m_sceneList;
 
 	void Update ()
@@ -14,7 +15,7 @@ public class SceneHandler : MonoBehaviour
         {
             m_sceneList = new List<Scene>();
 
-            Scene tackleScene = GUIManager.instance.createTackle02Scene();
+            Scene tackleScene = GUIManager.instance.createTackleDribbleScene();
             tackleScene.gameObject.SetActiveRecursively(false);
             m_sceneList.Add(tackleScene);
 
@@ -27,7 +28,8 @@ public class SceneHandler : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.X))
         {
-            m_scene.play();
+            Scene scene = (GameObject.Instantiate(m_scenePrefab) as GameObject).GetComponent<Scene>();
+            scene.play();
         }
 	}
 
