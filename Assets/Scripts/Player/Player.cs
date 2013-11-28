@@ -181,9 +181,27 @@ public class Player : MonoBehaviour
         return true; // UnityEngine.Random.Range(0.0f, 1.0f) > 0.5f;
     }
 
-    public void tackleTo(TackleInfo2 pTackleInfo)
+    public void moveToNextSquare()
     {
-        playerController.tackleTo(pTackleInfo);
+        StartCoroutine(playerController.moveToNextSquare());
+    }
+
+    //Player controller wrapper
+    public void performTackle(Vector2 pTackleToIndex)
+    {
+        playerController.performTackle(pTackleToIndex);
+    }
+
+    //Player controller wrapper
+    public void performJump(Vector2 pJumpToIndex)
+    {
+        playerController.performJump(pJumpToIndex);
+    }
+
+    public void takeBall()
+    {
+        m_ball.transform.parent = null;
+        m_ball = null;
     }
 
     #region PROPERTIES
@@ -200,6 +218,11 @@ public class Player : MonoBehaviour
         get { return playerController.isFliped; }
     }
 
+    public Vector2 jumpToIndex
+    {
+        get { return playerController.jumpToIndex; }
+    }
+
     public bool hasBall
     {
         get { return m_ball != null; }
@@ -213,6 +236,12 @@ public class Player : MonoBehaviour
     public Team team
     {
         get { return m_team; }
+    }
+
+    public Action jumpEnd
+    {
+        get { return playerController.jumpEnd; }
+        set { playerController.jumpEnd = value; }
     }
 
     #endregion

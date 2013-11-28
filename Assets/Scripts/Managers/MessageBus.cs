@@ -1,3 +1,4 @@
+using UnityEngine;
 using System;
 
 public class MessageBus
@@ -6,6 +7,9 @@ public class MessageBus
     public Action PlayerMoveEnded;
 
     public Action CurrentSceneEnded;
+
+    public Action<Player> PlayerMovedToTile;
+    public Action<Ball> BallMovedToTile;
 
     public void dispatchTackleBattleStart()
     {
@@ -22,11 +26,24 @@ public class MessageBus
         if (CurrentSceneEnded != null) CurrentSceneEnded();
     }
 
+    public void dispatchPlayerMovedToTile(Player pPlayer)
+    {
+        if (PlayerMovedToTile != null) PlayerMovedToTile(pPlayer);
+    }
+
+    public void dispatchBallMovedToTile(Ball pBall)
+    {
+        if (BallMovedToTile != null) BallMovedToTile(pBall);
+    }
+
     public void cleanAllActions()
     {
         TackleBattleStart = null;
         PlayerMoveEnded = null;
 
         CurrentSceneEnded = null;
+
+        PlayerMovedToTile = null;
+        BallMovedToTile = null;
     }
 }

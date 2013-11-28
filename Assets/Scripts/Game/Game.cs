@@ -119,6 +119,174 @@ public class Game : MonoBehaviour
         PlayerTurnAnimation playerTurnAnimation = GUIManager.instance.createPlayerTurnAnimation();
         playerTurnAnimation.init();
         playerTurnAnimation.e_end += startPlayerTurn;
+
+        //Add listeners
+        ApplicationFactory.instance.m_messageBus.PlayerMovedToTile += currentPlayerMovedToTile;
+        ApplicationFactory.instance.m_messageBus.BallMovedToTile += ballMovedToTile;
+    }
+
+    private void currentPlayerMovedToTile(Player pPlayer)
+    {
+        Player tacklePlayer;
+        if (isPlayerTackled(pPlayer, out tacklePlayer))
+        {
+            ApplicationFactory.instance.m_messageBus.dispatchTackleBattleStart();
+
+            FX02 fx = ApplicationFactory.instance.m_fxManager.createFX02(tacklePlayer.transform.position);
+            fx.init();
+
+            bool isDribble = UnityEngine.Random.RandomRange(0.0f, 1.0f) > 0.5f;
+
+            if (isDribble) fx.e_end += tackleDribbleStart;
+            else fx.e_end += tackleNoDribbleStart;
+
+            m_tackleInfo = new TackleInfo();
+            m_tackleInfo.m_isDribble = isDribble;
+            m_tackleInfo.m_jumpPlayer = pPlayer;
+            m_tackleInfo.m_tacklePlayer = tacklePlayer;
+            m_tackleInfo.m_jumpToIndex = pPlayer.jumpToIndex;
+            m_tackleInfo.m_tackleToIndex = pPlayer.Index;
+        }
+        else
+        {
+            pPlayer.moveToNextSquare();
+        }
+    }
+
+    private void ballMovedToTile(Ball pBall)
+    {
+        Player cutPlayer;
+        if (isBallCut(pBall, out cutPlayer))
+        {
+            ApplicationFactory.instance.m_messageBus.dispatchTackleBattleStart();
+
+            FX02 fx = ApplicationFactory.instance.m_fxManager.createFX02(cutPlayer.transform.position);
+            fx.init();
+
+            if (cutPlayer.isGK)
+            {
+                bool isGoal = UnityEngine.Random.RandomRange(0.0f, 1.0f) > 0.5f;
+                
+                //if (isGoal) fx.e_end += startCatchGoal;
+                //else fx.e_end += startCatchNoGoal;
+
+                //player.catchTo();
+            }
+            else
+            {
+                bool isPass = UnityEngine.Random.RandomRange(0.0f, 1.0f) > 0.5f;
+                
+                //if (isPass) fx.e_end += cutPassStart;
+                //else fx.e_end += cutNoPassStart;
+                
+                //player.blockTo();
+            }
+        }
+        else
+        {
+            pBall.moveToNextSquare();
+        }
+    }
+
+    private bool isPlayerTackled(Player pPlayer, out Player pTacklePlayer)
+    {
+        for (int x = (int)pPlayer.Index.x - 1; x < (int)pPlayer.Index.x + 2; x++)
+        {
+            for (int y = (int)pPlayer.Index.y - 1; y < (int)pPlayer.Index.y + 2; y++)
+            {
+                if (Mathf.Abs(pPlayer.Index.x - x) + Mathf.Abs(pPlayer.Index.y - y) <= 1 && (x != pPlayer.Index.x || y != pPlayer.Index.y) && (x >= 0 && x < Board.SIZEX && y >= 0 && y < Board.SIZEY))
+                {
+                    if (m_board.isPlayerOnTile(new Vector2(x, y)))
+                    {
+                        Player player = m_board.getPlayerAtIndex(new Vector2(x, y));
+                        if (player != null && !player.m_hasReacted && player.team.m_user != pPlayer.team.m_user && player.isGonnaTackle())
+                        {
+                            pTacklePlayer = player;
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        pTacklePlayer = null;
+        return false;
+    }
+
+    private bool isBallCut(Ball pBall, out Player pCutPlayer)
+    {
+        for (int x = (int)pBall.Index.x - 1; x < (int)pBall.Index.x + 2; x++)
+        {
+            for (int y = (int)pBall.Index.y - 1; y < (int)pBall.Index.y + 2; y++)
+            {
+                //Check also the current square
+                if (Mathf.Abs(pBall.Index.x - x) + Mathf.Abs(pBall.Index.y - y) <= 1 && (x >= 0 && x < Board.SIZEX && y >= 0 && y < Board.SIZEY))
+                {
+                    if (m_board.isPlayerOnTile(new Vector2(x, y)))
+                    {
+                        Player player = m_board.getPlayerAtIndex(new Vector2(x, y));
+                        if (player != null && !player.m_hasReacted && player.team.m_user != pBall.m_player.team.m_user)
+                        {
+                            pCutPlayer = player;
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        pCutPlayer = null;
+        return false;
+    }
+
+    private TackleInfo m_tackleInfo;
+
+    private void tackleDribbleStart()
+    {
+        SceneManager.instance.playTackle_Dribble(User.P1, User.P2);
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += tackleEnd;
+    }
+
+    private void tackleNoDribbleStart()
+    {
+        SceneManager.instance.playTackle_NoDribble(User.P1, User.P2);
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += tackleEnd;
+    }
+
+    private void tackleEnd()
+    {
+        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded -= tackleEnd;
+
+        m_tackleInfo.m_tacklePlayer.performTackle(m_tackleInfo.m_tackleToIndex);
+        m_tackleInfo.m_jumpPlayer.performJump(m_tackleInfo.m_jumpToIndex);
+
+        if (!m_tackleInfo.m_isDribble)
+        {
+            m_tackleInfo.m_jumpPlayer.takeBall();
+            m_tackleInfo.m_tacklePlayer.setBall(m_ball);
+
+            m_tackleInfo.m_jumpPlayer.jumpEnd += jumpNoDribbleEnd;
+        }
+        else
+        {
+            m_tackleInfo.m_jumpPlayer.jumpEnd += jumpDribbleEnd;
+        }
+    }
+
+    private void jumpNoDribbleEnd()
+    {
+        m_tackleInfo.m_jumpPlayer.jumpEnd -= jumpNoDribbleEnd;
+
+        PlayerTurnAnimation playerTurnAnimation = GUIManager.instance.createPlayerTurnAnimation();
+        playerTurnAnimation.init();
+        playerTurnAnimation.e_end += startPlayerTurn;
+    }
+
+    private void jumpDribbleEnd()
+    {
+        m_tackleInfo.m_jumpPlayer.jumpEnd -= jumpDribbleEnd;
+
+        m_tackleInfo.m_jumpPlayer.moveToNextSquare();
     }
 
     /// <summary>
@@ -127,28 +295,7 @@ public class Game : MonoBehaviour
     private void startPlayerTurn()
     {
         m_currentTeam.startTurn();
-        //SceneManager.instance.playTackle02();
     }
-
-    /*public void selectPlayer(Vector2 index)
-    {
-        //If there is a player on the tile
-        if (m_board.isPlayerOnTile(index))
-        {
-            //Get the player on the tile
-            m_currentPlayer = m_board.getPlayerAtIndex(index);
-
-            //If player hasn't ended his turn yet and is ours
-            if (!m_currentPlayer.m_hasEndedTurn && isPlayerSelectable())
-            {
-                //Remove listeners
-                m_cursor.e_end -= selectPlayer;
-
-                m_cursor.gameObject.SetActiveRecursively(false);
-                showPlayerMenu();
-            }
-        }
-    }*/
 
     private bool isPlayerSelectable()
     {
@@ -362,7 +509,7 @@ public class Game : MonoBehaviour
         }
     }*/
 
-    private void tackleEnd()
+    /*private void tackleEnd()
     {
         //Remove listeners
         m_currentPlayer.e_actionEnd -= tackleEnd;
@@ -371,7 +518,7 @@ public class Game : MonoBehaviour
         m_board.clearTileRadius();
 
         //showPlayerMenu();
-    }
+    }*/
 }
 
 public class User

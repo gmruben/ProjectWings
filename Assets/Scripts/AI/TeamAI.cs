@@ -17,7 +17,7 @@ public class TeamAI : MonoBehaviour
 
     public void startTurn()
     {
-        TackleInfo info = calculateBestPlayerToTackle(opponentTeam.playerWithTheBall);
+        //TackleInfo info = calculateBestPlayerToTackle(opponentTeam.playerWithTheBall);
 
         PathFinder pathFinder = new PathFinder();
         //List<Vector2> moveList = pathFinder.findPath(info.m_positionToTackleFrom, info.m_positionToTackleTo);
@@ -27,7 +27,7 @@ public class TeamAI : MonoBehaviour
     /// <summary>
     /// Calculates who is the best player to tackle the opponent player with the ball
     /// </summary>
-    public TackleInfo calculateBestPlayerToTackle(Player opponent)
+    /*public TackleInfo calculateBestPlayerToTackle(Player opponent)
     {
         //Store best score and player
         float bestScore = 0;
@@ -48,13 +48,13 @@ public class TeamAI : MonoBehaviour
         }
 
         return new TackleInfo(bestPlayer, bestPlayer.Index, opponent.Index);
-    }
+    }*/
 }
 
 /// <summary>
 /// Stores the information needed to perform a tackle
 /// </summary>
-public class TackleInfo
+/*public class TackleInfo
 {
     public Player m_player;
     public Vector2 m_positionToTackleFrom;
@@ -66,4 +66,4 @@ public class TackleInfo
         m_positionToTackleFrom = pFrom;
         m_positionToTackleTo = pTo;
     }
-}
+}*/

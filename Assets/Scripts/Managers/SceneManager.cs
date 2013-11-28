@@ -105,6 +105,38 @@ public class SceneManager : MonoBehaviour
         playScene();
     }
 
+    public void playCut_Pass(int pTeamUser1)
+    {
+        m_sceneList = new List<Scene>();
+
+        Scene startScene = GUIManager.instance.createStartScene();
+        startScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(startScene);
+
+        Scene cutScene = GUIManager.instance.createCutPassScene();
+        cutScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(cutScene);
+
+        playScene();
+
+    }
+
+    public void playCut_NoPass(int pTeamUser1)
+    {
+        m_sceneList = new List<Scene>();
+
+        Scene startScene = GUIManager.instance.createStartScene();
+        startScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(startScene);
+
+        Scene cutScene = GUIManager.instance.createCutNoPassScene();
+        cutScene.gameObject.SetActiveRecursively(false);
+        m_sceneList.Add(cutScene);
+
+        playScene();
+
+    }
+
     #endregion
 
     private void playScene()

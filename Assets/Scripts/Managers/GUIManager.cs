@@ -13,6 +13,8 @@ public class GUIManager : MonoBehaviour
     public GameObject m_gkCatchNoGoalScene;
     public GameObject m_gkCatchGoalScene;
     public GameObject m_goalScene;
+    public GameObject m_cutPassScene;
+    public GameObject m_cutNoPassScene;
 
     public GameObject m_playerMenuPrefab;
     public GameObject m_yesNoMenuPrefab;
@@ -106,6 +108,18 @@ public class GUIManager : MonoBehaviour
     public Scene createGoalScene()
     {
         Scene scene = (GameObject.Instantiate(m_goalScene) as GameObject).GetComponent<Scene>();
+        return scene;
+    }
+
+    public Scene createCutPassScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_cutPassScene) as GameObject).GetComponent<Scene>();
+        return scene;
+    }
+
+    public Scene createCutNoPassScene()
+    {
+        Scene scene = (GameObject.Instantiate(m_cutNoPassScene) as GameObject).GetComponent<Scene>();
         return scene;
     }
 

@@ -21,7 +21,7 @@ public class Ball : MonoBehaviour
 
     private BallAnimation m_ballAnimation;
 
-    private Player m_player;
+    public Player m_player;
 
     //EVENTS
     public event Action moveFinishedEvent;
@@ -75,8 +75,6 @@ public class Ball : MonoBehaviour
         m_speedY = 1.5f * m_gravity;
     }
 
-    
-
     /// <summary>
     /// Shot the ball to a tile
     /// </summary>
@@ -98,6 +96,11 @@ public class Ball : MonoBehaviour
         StartCoroutine(updateShot());
     }
 
+    public void moveToNextSquare()
+    {
+        StartCoroutine(updateShot());
+    }
+
     private IEnumerator updateShot()
     {
         while (true)
@@ -108,10 +111,12 @@ public class Ball : MonoBehaviour
             if (x != Index.x)
             {
                 Index = new Vector2(x, Index.y);
-                if (checkPlayersAround())
+                ApplicationFactory.instance.m_messageBus.dispatchBallMovedToTile(this);
+
+                /*if (checkPlayersAround())
                 {
                     break;
-                }
+                }*/
             }
 
             yield return new WaitForSeconds(Time.deltaTime);
@@ -147,7 +152,7 @@ public class Ball : MonoBehaviour
                             }
                             else
                             {
-                                fx.e_end += startBlock;
+                                fx.e_end += startCut;
                                 player.blockTo();
                             }
 
@@ -178,15 +183,15 @@ public class Ball : MonoBehaviour
         SceneManager.instance.e_sceneFinished -= endCatch;
     }
 
-    private void startBlock()
+    private void startCut()
     {
-        SceneManager.instance.playTackle_Dribble(User.P1, User.P2);
-        SceneManager.instance.e_sceneFinished += blockEnd;
+        SceneManager.instance.playCut_Pass(User.P1);
+        SceneManager.instance.e_sceneFinished += cutEnd;
     }
 
-    private void blockEnd()
+    private void cutEnd()
     {
-        SceneManager.instance.e_sceneFinished -= blockEnd;
+        SceneManager.instance.e_sceneFinished -= cutEnd;
         StartCoroutine(updateShot());
     }
 
