@@ -57,7 +57,7 @@ public class Player : MonoBehaviour
         m_stats.m_tackle = 10;
 
         //Add listeners
-        ApplicationFactory.instance.m_messageBus.PlayerMoveEnded += playerControllerMoveFinished;
+        //ApplicationFactory.instance.m_messageBus.PlayerMoveEnded += playerControllerMoveFinished;
     }
 
     public void setIndex(Vector2 pIndex)
@@ -82,10 +82,6 @@ public class Player : MonoBehaviour
         m_hasMoved = true;
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="pBall"></param>
     public void setBall(Ball pBall)
     {
         m_ball = pBall;
@@ -102,9 +98,9 @@ public class Player : MonoBehaviour
     /// Pass the ball to a tile
     /// </summary>
     /// <param name="pIndex">Tile index</param>
-    public void passTo(Vector2 pIndex)
+    public void passTo(Vector2 pIndex, List<Vector2> pTileList)
     {
-        m_ball.passTo(pIndex);
+        m_ball.passTo(this, pIndex, pTileList);
 
         //Set camera target
         m_camera.setTarget(m_ball.transform);
@@ -140,30 +136,16 @@ public class Player : MonoBehaviour
         m_hasReacted = true;
     }
 
-    public void catchTo()
-    {
-        m_hasReacted = true;
-
-        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded += performCatch;
-    }
-
-    private void performCatch()
-    {
-        ApplicationFactory.instance.m_messageBus.CurrentSceneEnded -= performCatch;
-
-        playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Catch);
-    }
-
     /// <summary>
     /// Shoot the ball to a tile
     /// </summary>
     /// <param name="pIndex">Tile index</param>
-    private void playerControllerMoveFinished()
+    /*private void playerControllerMoveFinished()
     {
         m_board.playerToTile(this);
 
         if (moveFinishedEvent != null) moveFinishedEvent();
-    }
+    }*/
 
     private void shootAnimationFinished()
     {
@@ -198,6 +180,20 @@ public class Player : MonoBehaviour
         playerController.performJump(pJumpToIndex);
     }
 
+    //Player controller wrapper
+    public void performCut()
+    {
+        m_hasReacted = true;
+        playerController.performCut();
+    }
+
+    //Player controller wrapper
+    public void performCatch()
+    {
+        m_hasReacted = true;
+        playerController.performCatch();
+    }
+
     public void takeBall()
     {
         m_ball.transform.parent = null;
@@ -218,9 +214,14 @@ public class Player : MonoBehaviour
         get { return playerController.isFliped; }
     }
 
-    public Vector2 jumpToIndex
+    public Vector2 nextMoveTileIndex
     {
-        get { return playerController.jumpToIndex; }
+        get { return playerController.nextMoveTileIndex; }
+
+    }
+    public bool isMoveEnded
+    {
+        get { return playerController.isMoveEnded; }
     }
 
     public bool hasBall
@@ -242,6 +243,18 @@ public class Player : MonoBehaviour
     {
         get { return playerController.jumpEnd; }
         set { playerController.jumpEnd = value; }
+    }
+
+    public Action cutEnd
+    {
+        get { return playerController.cutEnd; }
+        set { playerController.cutEnd = value; }
+    }
+
+    public Action catchEnd
+    {
+        get { return playerController.catchEnd; }
+        set { playerController.catchEnd = value; }
     }
 
     #endregion

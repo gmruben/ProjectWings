@@ -6,6 +6,8 @@ using System;
 public class PlayerController : MonoBehaviour
 {
     public Action jumpEnd;
+    public Action cutEnd;
+    public Action catchEnd;
 
     private Transform m_transform;
     private Board m_board;
@@ -59,7 +61,7 @@ public class PlayerController : MonoBehaviour
 
             m_isFliped = direction.x != 0 && direction.x < 0;
 
-            while ((new Vector2(transform.position.x, transform.position.z) - nextSquareIndex).sqrMagnitude > 0.005f)
+            while ((new Vector2(transform.position.x, transform.position.z) - nextSquareIndex).sqrMagnitude > 0.05f)
             {
                 transform.position += new Vector3(direction.x, 0, direction.y) * m_speed * Time.deltaTime;
                 yield return new WaitForSeconds(Time.deltaTime);
@@ -68,12 +70,13 @@ public class PlayerController : MonoBehaviour
             Index = nextSquareIndex;
             m_toMoveSquareList.RemoveAt(0);
 
-            ApplicationFactory.instance.m_messageBus.dispatchPlayerMovedToTile(m_player);
+            if (m_player.hasBall) ApplicationFactory.instance.m_messageBus.dispatchPlayerMovedToTile(m_player);
+            else StartCoroutine(moveToNextSquare());
         }
         else
         {
             m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
-            ApplicationFactory.instance.m_messageBus.dispatchPlayerMoveEnded();
+            ApplicationFactory.instance.m_messageBus.dispatchPlayerMoveEnded(m_player);
         }
     }
 
@@ -113,6 +116,30 @@ public class PlayerController : MonoBehaviour
         
         Index = pJumpToIndex;
         if (jumpEnd != null) jumpEnd();
+    }
+
+    public void performCut()
+    {
+        m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
+        m_playerAnimation.animationFinished += onCutAnimationEnd;
+    }
+
+    private void onCutAnimationEnd()
+    {
+        m_playerAnimation.animationFinished -= onCutAnimationEnd;
+        if (cutEnd != null) cutEnd();
+    }
+
+    public void performCatch()
+    {
+        m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Catch);
+        if (catchEnd != null) catchEnd();
+    }
+
+    private void onCatchAnimationEnd()
+    {
+        m_playerAnimation.animationFinished -= onCatchAnimationEnd;
+        if (catchEnd != null) catchEnd();
     }
 
     #region PROPERTIES
@@ -159,15 +186,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public Vector2 jumpToIndex
+    public Vector2 nextMoveTileIndex
     {
-        get { return (m_toMoveSquareList.Count == 0) ? Index : m_toMoveSquareList[0]; }
+        get { return m_toMoveSquareList[0]; }
+    }
+
+    public bool isMoveEnded
+    {
+        get { return m_toMoveSquareList.Count == 0; }
     }
 
     #endregion
 }
 
-public class TackleInfo
+public struct TackleInfo
 {
     public bool m_isDribble;
 
@@ -176,4 +208,16 @@ public class TackleInfo
 
     public Vector2 m_jumpToIndex;
     public Vector2 m_tackleToIndex;
+}
+
+public struct CutInfo
+{
+    public bool m_isPass;
+    public Player m_cutPlayer;
+}
+
+public struct CatchInfo
+{
+    public bool m_isGoal;
+    public Player m_catchPlayer;
 }

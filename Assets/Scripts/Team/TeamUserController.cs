@@ -77,16 +77,22 @@ public class TeamUserController : TeamController
                 m_arrow.gameObject.SetActiveRecursively(true);
                 m_arrow.init(m_currentPlayer.Index, (m_currentPlayer.isFliped ? -1 : 1));
 
-                m_arrow.e_end += endMove;
+                m_arrow.e_end += startMove;
                 m_arrow.e_cancel += cancelMove;
 
                 break;
             case PlayerAction.Pass:
+                m_cursor.setIndex(m_currentPlayer.Index);
                 m_cursor.gameObject.SetActiveRecursively(true);
                 //m_camera.setTarget(m_cursor.transform);
 
+                //Draw board tiles
+                m_board.drawPass(m_currentPlayer.Index, m_currentPlayer.Index);
+
                 //Add listeners
-                //m_cursor.e_end += passTo;
+                m_cursor.e_move += drawPassTiles;
+                m_cursor.e_end += startPass;
+                m_arrow.e_cancel += cancelMove;
 
                 break;
             case PlayerAction.Shoot:
@@ -121,7 +127,11 @@ public class TeamUserController : TeamController
                 }
                 else
                 {
-                    //if (e_endTurn != null) e_endTurn(m_turnIndex);
+                    m_cursor.setActive(true);
+                    m_cursor.setIndex(m_team.m_playerList[1].Index);
+
+                    //Add listener
+                    m_cursor.e_end += startPlayerTurn;
                 }
 
                 break;
@@ -140,6 +150,47 @@ public class TeamUserController : TeamController
         GameObject.Destroy(m_currentMenu.gameObject);
     }
 
+    private void startMove(List<Vector2> pTileIndexList)
+    {
+        //Remove listeners
+        m_arrow.e_end -= startMove;
+        m_arrow.e_cancel -= cancelMove;
+
+        m_currentPlayer.move(pTileIndexList);
+        //m_currentPlayer.moveFinishedEvent += currentPlayerMoveFinished;
+
+        ApplicationFactory.instance.m_messageBus.PlayerMoveEnded += playerMoveEnded;
+
+        m_board.clearTileRadius();
+    }
+
+    private void startPass(Vector2 pIndex)
+    {
+        m_cursor.e_move -= drawPassTiles;
+        m_cursor.e_end -= startPass;
+        m_arrow.e_cancel -= cancelMove;
+
+        m_cursor.setActive(false);
+
+        //Shoot the ball
+        m_currentPlayer.passTo(pIndex, m_board.currentTileList);
+
+        //Remove board tiles
+        m_board.clearTileRadius();
+
+        ApplicationFactory.instance.m_messageBus.BallPassEnded += ballPassEnded;
+    }
+
+    private void playerMoveEnded(Player pPlayer)
+    {
+        startTurn();
+    }
+
+    private void ballPassEnded(Ball pBall)
+    {
+        startTurn();
+    }
+
     private void startShot(Vector2 pIndex)
     {
         m_cursor.setActive(false);
@@ -149,6 +200,15 @@ public class TeamUserController : TeamController
 
         //Shoot the ball
         m_currentPlayer.shootTo();
+    }
+
+    private void drawPassTiles(Vector2 pIndex)
+    {
+        //Remove board tiles
+        m_board.clearTileRadius();
+
+        //Draw board tiles
+        m_board.drawPass(m_currentPlayer.Index, pIndex);
     }
 
     private void cancelBox()
@@ -162,22 +222,10 @@ public class TeamUserController : TeamController
         //setCursorActive();
     }
 
-    private void endMove(List<Vector2> pTileIndexList)
-    {
-        //Remove listeners
-        m_arrow.e_end -= endMove;
-        m_arrow.e_cancel -= cancelMove;
-
-        m_currentPlayer.move(pTileIndexList);
-        m_currentPlayer.moveFinishedEvent += currentPlayerMoveFinished;
-
-        m_board.clearTileRadius();
-    }
-
     private void cancelMove()
     {
         //Remove listeners
-        m_arrow.e_end -= endMove;
+        m_arrow.e_end -= startMove;
         m_arrow.e_cancel -= cancelMove;
 
         //showPlayerMenu();

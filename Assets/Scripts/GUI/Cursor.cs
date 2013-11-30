@@ -15,6 +15,7 @@ public class Cursor : MonoBehaviour
     private float counter;
 
     //EVENTS
+    public event Action<Vector2> e_move;
     public event Action<Vector2> e_end;
     public event Action e_cancel;
 
@@ -74,6 +75,8 @@ public class Cursor : MonoBehaviour
             transform.position = new Vector3(m_index.x, 0.05f, m_index.y);
 
             counter = COUNTER_TIME;
+
+            if (e_move != null) e_move(m_index);
         }
     }
 }

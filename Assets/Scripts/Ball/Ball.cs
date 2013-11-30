@@ -1,17 +1,20 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Ball : MonoBehaviour
 {
-    private float m_speed = 0.5f;
+    private float m_passSpeed = 0.5f;
+    private const float m_shotSpeed = 5.0f;
 
     private Vector2 m_index;
     private Vector2 m_direction;
     private Vector2 m_targetTileIndex;
-    private bool m_isMoving = false;
 
-    private float m_shotSpeed = 15.0f;
+    private List<Vector2> m_passTileList;
+    
+    private bool m_isShot = false;
 
     private float m_accY;
     private float m_speedY;
@@ -35,44 +38,27 @@ public class Ball : MonoBehaviour
         m_ballAnimation.playAnimation(BallAnimationIds.IDLE);
     }
 
-	void Update ()
-    {
-        if (m_isMoving)
-        {
-            m_accY -= m_gravity * Time.deltaTime;
-            m_speedY += m_accY * Time.deltaTime;
-
-            transform.position += new Vector3(m_direction.x * m_speed, m_speedY, m_direction.y * m_speed) * Time.deltaTime;
-
-            if ((new Vector2(transform.position.x, transform.position.z) - m_targetTileIndex).sqrMagnitude < 0.005f)
-            {
-                m_isMoving = false;
-                transform.position = new Vector3(m_targetTileIndex.x, 0.15f, m_targetTileIndex.y);
-
-                m_board.ballToTile(m_targetTileIndex);
-
-                //Dispatch event
-                moveFinishedEvent();
-            }
-        }
-	}
-
     /// <summary>
     /// Pass the ball to a tile
     /// </summary>
     /// <param name="pIndex">Tile index</param>
-    public void passTo(Vector2 pIndex)
+    public void passTo(Player pPlayer, Vector2 pIndex, List<Vector2> pTileList)
     {
         //Remove parent
         transform.parent = null;
         transform.position = new Vector3(m_index.x, 0.15f, m_index.y);
 
+        m_player = pPlayer;
+        m_passTileList = pTileList;
+
         m_direction = pIndex - m_index;
         m_targetTileIndex = pIndex;
-        m_isMoving = true;
 
-        m_accY = -m_gravity;
-        m_speedY = 1.5f * m_gravity;
+        //m_accY = -m_gravity;
+        //m_speedY = 1.5f * m_gravity;
+
+        m_isShot = false;
+        StartCoroutine(updatePass());
     }
 
     /// <summary>
@@ -90,109 +76,46 @@ public class Ball : MonoBehaviour
 
         m_direction = (pIndex - m_index).normalized;
 
-        //Set animatino
+        //Set animation
         m_ballAnimation.playAnimation("01_" + BallAnimationIds.SHOOT);
 
+        m_isShot = true;
         StartCoroutine(updateShot());
     }
 
     public void moveToNextSquare()
     {
-        StartCoroutine(updateShot());
+        if (m_isShot) StartCoroutine(updateShot());
+        else StartCoroutine(updatePass());
     }
 
     private IEnumerator updateShot()
     {
-        while (true)
+        float nextTilePosX = (Index.x + 1) * Board.c_tileSize;
+        while (Mathf.Abs(transform.position.x - nextTilePosX) > 0.05f)
         {
-            transform.position += new Vector3(m_direction.x, 0, m_direction.y) * 2.5f * Time.deltaTime;
-
-            int x = Mathf.FloorToInt(transform.position.x / Board.c_tileSize);
-            if (x != Index.x)
-            {
-                Index = new Vector2(x, Index.y);
-                ApplicationFactory.instance.m_messageBus.dispatchBallMovedToTile(this);
-
-                /*if (checkPlayersAround())
-                {
-                    break;
-                }*/
-            }
-
+            transform.position += new Vector3(m_direction.x, 0, m_direction.y) * m_shotSpeed * Time.deltaTime;
             yield return new WaitForSeconds(Time.deltaTime);
         }
+        
+        Index = new Vector2(Index.x + 1, Index.y);
+        ApplicationFactory.instance.m_messageBus.dispatchBallMovedToTile(this);
     }
 
-    private bool checkPlayersAround()
+    private IEnumerator updatePass()
     {
-        for (int x = (int)Index.x - 1; x < (int)Index.x + 2; x++)
+        Vector2 nextSquareIndex = m_passTileList[0];
+        while (Mathf.Abs(transform.position.x - nextSquareIndex.x) > 0.05f && Mathf.Abs(transform.position.z - nextSquareIndex.y) > 0.05f)
         {
-            for (int y = (int)Index.y - 1; y < (int)Index.y + 2; y++)
-            {
-                //Check also the current square
-                if (Mathf.Abs(Index.x - x) + Mathf.Abs(Index.y - y) <= 1 && (x >= 0 && x < Board.SIZEX && y >= 0 && y < Board.SIZEY))
-                {
-                    if (m_board.isPlayerOnTile(new Vector2(x, y)))
-                    {
-                        Player player = m_board.getPlayerAtIndex(new Vector2(x, y));
-                        if (player != null && !player.m_hasReacted && player.team.m_user != m_player.team.m_user)
-                        {
-                            ApplicationFactory.instance.m_messageBus.dispatchTackleBattleStart();
-                            
-                            FX02 fx = ApplicationFactory.instance.m_fxManager.createFX02(player.transform.position);
-                            fx.init();
-
-                            if (player.isGK)
-                            {
-                                bool isGoal = UnityEngine.Random.RandomRange(0.0f, 1.0f) > 0.5f;
-                                if (isGoal) fx.e_end += startCatchGoal;
-                                else fx.e_end += startCatchNoGoal;
-
-                                player.catchTo();
-                            }
-                            else
-                            {
-                                fx.e_end += startCut;
-                                player.blockTo();
-                            }
-
-                            return true;
-                        }
-                    }
-                }
-            }
+            transform.position += new Vector3(m_direction.x, 0, m_direction.y) * m_passSpeed * Time.deltaTime;
+            yield return new WaitForSeconds(Time.deltaTime);
         }
 
-        return false;
-    }
+        m_passTileList.RemoveAt(0);
+        Index = nextSquareIndex;
 
-    private void startCatchGoal()
-    {
-        SceneManager.instance.playCatch_Goal(User.P1);
-        SceneManager.instance.e_sceneFinished += endCatch;
-    }
-
-    private void startCatchNoGoal()
-    {
-        SceneManager.instance.playCatch_NoGoal(User.P1);
-        SceneManager.instance.e_sceneFinished += endCatch;
-    }
-
-    private void endCatch()
-    {
-        SceneManager.instance.e_sceneFinished -= endCatch;
-    }
-
-    private void startCut()
-    {
-        SceneManager.instance.playCut_Pass(User.P1);
-        SceneManager.instance.e_sceneFinished += cutEnd;
-    }
-
-    private void cutEnd()
-    {
-        SceneManager.instance.e_sceneFinished -= cutEnd;
-        StartCoroutine(updateShot());
+        if (Index == m_targetTileIndex) ApplicationFactory.instance.m_messageBus.dispatchBallPassEnded(this);
+        else ApplicationFactory.instance.m_messageBus.dispatchBallMovedToTile(this);
     }
 
     #region PROPERTIES

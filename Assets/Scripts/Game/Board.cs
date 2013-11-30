@@ -106,6 +106,44 @@ public class Board : MonoBehaviour
         }
     }
 
+    //Merge with drawShoot
+    public void drawPass(Vector2 pStart, Vector2 pEnd)
+    {
+        m_tileList = new List<GameObject>();
+
+        if (pStart == pEnd) return;
+
+        float dx = Mathf.Abs(pStart.x - pEnd.x);
+        float dy = Mathf.Abs(pStart.y - pEnd.y);
+        
+        bool isInX = (dx > dy) ? true : false;
+        int istart = (isInX ? (int) pStart.x : (int) pStart.y) + 1;
+        int size = (isInX ? SIZEX : SIZEY) * 2;
+
+        for (int i = istart; i < size; i++)
+        {
+            Vector2 start = isInX ? new Vector2(i, 0) : new Vector2(0, i);
+            Vector2 end = isInX ? new Vector2(i, SIZEY - 1) : new Vector2(SIZEX - 1, i);
+
+            Debug.DrawLine(new Vector3(start.x, 0, start.y), new Vector3(end.x, 0, end.y), Color.white, 5);
+            Debug.DrawLine(new Vector3(pStart.x, 0, pStart.y), new Vector3(pEnd.x, 0, pEnd.y), Color.white, 5);
+
+            Vector2 point = MathHelper.lineIntersectionPoint(start, end, pStart, pEnd);
+            Vector2 index = tileIndexAtPoint(point);
+
+            if ((isInX && pEnd.x - pStart.x < 0) || (!isInX && pEnd.y - pStart.y < 0))
+            {
+                index = new Vector2(pStart.x - (index.x - pStart.x), pStart.y - (index.y - pStart.y));
+            }
+
+            bool isInPath = (index - pStart).sqrMagnitude > (pEnd - pStart).sqrMagnitude;
+            if (index.x >= 0 && index.y >= 0 && index.x < SIZEX && index.y < SIZEY && !isInPath)
+            {
+                drawTile(index.x, index.y);
+            }
+        }
+    }
+
     public void clearTileRadius()
     {
         for (int i = 0; i < m_tileList.Count; i++)
@@ -182,6 +220,19 @@ public class Board : MonoBehaviour
     public int[][] data
     {
         get { return m_boardData; }
+    }
+
+    public List<Vector2> currentTileList
+    {
+        get
+        {
+            List<Vector2> tileList = new List<Vector2>();
+            for (int i = 0; i < m_tileList.Count; i++)
+            {
+                tileList.Add(new Vector2((int)(m_tileList[i].transform.position.x / c_tileSize), (int)(m_tileList[i].transform.position.z / c_tileSize)));
+            }
+            return tileList;
+        }
     }
 
     #endregion
