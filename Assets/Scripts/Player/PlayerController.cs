@@ -6,6 +6,7 @@ using System;
 public class PlayerController : MonoBehaviour
 {
     public Action jumpEnd;
+    public Action tackleEnd;
     public Action cutEnd;
     public Action catchEnd;
 
@@ -94,7 +95,9 @@ public class PlayerController : MonoBehaviour
             transform.position += new Vector3(direction.x, 0, direction.y) * 2.5f * Time.deltaTime;
             yield return new WaitForSeconds(Time.deltaTime);
         }
+
         Index = pTackleToIndex;
+        if (tackleEnd != null) tackleEnd();
 
         m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
     }

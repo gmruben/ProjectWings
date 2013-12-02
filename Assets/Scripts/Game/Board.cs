@@ -125,8 +125,8 @@ public class Board : MonoBehaviour
             Vector2 start = isInX ? new Vector2(i, 0) : new Vector2(0, i);
             Vector2 end = isInX ? new Vector2(i, SIZEY - 1) : new Vector2(SIZEX - 1, i);
 
-            Debug.DrawLine(new Vector3(start.x, 0, start.y), new Vector3(end.x, 0, end.y), Color.white, 5);
-            Debug.DrawLine(new Vector3(pStart.x, 0, pStart.y), new Vector3(pEnd.x, 0, pEnd.y), Color.white, 5);
+            //Debug.DrawLine(new Vector3(start.x, 0, start.y), new Vector3(end.x, 0, end.y), Color.white, 5);
+            //Debug.DrawLine(new Vector3(pStart.x, 0, pStart.y), new Vector3(pEnd.x, 0, pEnd.y), Color.white, 5);
 
             Vector2 point = MathHelper.lineIntersectionPoint(start, end, pStart, pEnd);
             Vector2 index = tileIndexAtPoint(point);

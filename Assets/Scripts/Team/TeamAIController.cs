@@ -6,8 +6,10 @@ public class TeamAIController : TeamController
 {
     private TeamAI m_teamAI;
 
-    public override void init(Board pBoard, Team pTeam)
+    public override void init(Game pGame, GameCamera pGameCamera, Board pBoard, Team pTeam)
     {
+        m_game = pGame;
+        m_gameCamera = pGameCamera;
         m_board = pBoard;
         m_team = pTeam;
 

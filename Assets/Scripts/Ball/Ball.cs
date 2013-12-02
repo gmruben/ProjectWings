@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class Ball : MonoBehaviour
 {
-    private float m_passSpeed = 0.5f;
+    private float m_passSpeed = 2.5f;
     private const float m_shotSpeed = 5.0f;
 
     private Vector2 m_index;
@@ -104,10 +104,12 @@ public class Ball : MonoBehaviour
 
     private IEnumerator updatePass()
     {
+        Vector3 v = new Vector3(m_direction.x, 0, m_direction.y).normalized;
         Vector2 nextSquareIndex = m_passTileList[0];
-        while (Mathf.Abs(transform.position.x - nextSquareIndex.x) > 0.05f && Mathf.Abs(transform.position.z - nextSquareIndex.y) > 0.05f)
+
+        while (!(Mathf.Abs(transform.position.x - nextSquareIndex.x) < 0.05f && m_direction.x != 0) && !(Mathf.Abs(transform.position.z - nextSquareIndex.y) < 0.05f && m_direction.y != 0))
         {
-            transform.position += new Vector3(m_direction.x, 0, m_direction.y) * m_passSpeed * Time.deltaTime;
+            transform.position += v * m_passSpeed * Time.deltaTime;
             yield return new WaitForSeconds(Time.deltaTime);
         }
 

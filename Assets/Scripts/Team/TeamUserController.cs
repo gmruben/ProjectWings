@@ -12,8 +12,10 @@ public class TeamUserController : TeamController
 
     private PlayerMenu m_currentMenu;
 
-    public override void init(Board pBoard, Team pTeam)
+    public override void init(Game pGame, GameCamera pGameCamera, Board pBoard, Team pTeam)
     {
+        m_game = pGame;
+        m_gameCamera = pGameCamera;
         m_board = pBoard;
         m_team = pTeam;
 
@@ -28,7 +30,12 @@ public class TeamUserController : TeamController
     public override void startTurn()
     {
         m_cursor.setActive(true);
-        m_cursor.setIndex(m_team.m_playerList[1].Index);
+
+        if (m_team.m_playerWithTheBall != null)
+        {
+            m_cursor.setIndex(m_team.m_playerWithTheBall.Index);
+            m_gameCamera.moveTo(m_team.m_playerWithTheBall.Index);
+        }
 
         //Add listener
         m_cursor.e_end += startPlayerTurn;
@@ -46,7 +53,7 @@ public class TeamUserController : TeamController
             if (!m_currentPlayer.m_hasEndedTurn && m_currentPlayer.team.m_user == m_team.m_user)
             {
                 //Remove listeners
-                m_cursor.e_end -= startPlayerTurn;
+                m_cursor.e_end -= startPlayerTurn;                
 
                 m_cursor.gameObject.SetActiveRecursively(false);
                 showPlayerMenu();
@@ -60,94 +67,46 @@ public class TeamUserController : TeamController
         m_currentMenu.init(m_currentPlayer);
 
         m_currentMenu.e_selected += optionSelected;
-        m_currentMenu.e_cancel += cancelBox;
+        m_currentMenu.e_cancel += cancelPlayerMenu;
     }
 
     public void optionSelected(int optionId)
     {
         //Remove listeners
         m_currentMenu.e_selected -= optionSelected;
-        m_currentMenu.e_cancel -= cancelBox;
+        m_currentMenu.e_cancel -= cancelPlayerMenu;
 
         switch (optionId)
         {
             case PlayerAction.Move:
-                m_board.drawTileRadius(m_currentPlayer.Index, 3);
-
-                m_arrow.gameObject.SetActiveRecursively(true);
-                m_arrow.init(m_currentPlayer.Index, (m_currentPlayer.isFliped ? -1 : 1));
-
-                m_arrow.e_end += startMove;
-                m_arrow.e_cancel += cancelMove;
-
+                move();
                 break;
             case PlayerAction.Pass:
-                m_cursor.setIndex(m_currentPlayer.Index);
-                m_cursor.gameObject.SetActiveRecursively(true);
-                //m_camera.setTarget(m_cursor.transform);
-
-                //Draw board tiles
-                m_board.drawPass(m_currentPlayer.Index, m_currentPlayer.Index);
-
-                //Add listeners
-                m_cursor.e_move += drawPassTiles;
-                m_cursor.e_end += startPass;
-                m_arrow.e_cancel += cancelMove;
-
+                pass();
                 break;
             case PlayerAction.Shoot:
-                m_cursor.setIndex(m_currentPlayer.Index);
-                m_cursor.gameObject.SetActiveRecursively(true);
-
-                //m_camera.setTarget(m_cursor.transform);
-
-                //Draw board tiles
-                m_board.drawShoot(m_currentPlayer.Index);
-
-                //Add listeners
-                m_cursor.e_end += startShot;
-                //m_cursor.e_cancel += cancelShoot;
-
+                shoot();
                 break;
             case PlayerAction.EndTurn:
-                //Finish current player turn
-                m_currentPlayer.m_hasEndedTurn = true;
-                m_currentPlayer.renderer.material.SetColor("_TintColor", new Color(0.5f, 0.5f, 0.5f));
-
-                m_cursor.setActive(true);
-                //m_cursor.e_end += selectPlayer;
-
-                //Dispatch event
-                m_turnIndex--;
-                if (m_turnIndex == 0)
-                {
-                    //m_currentPhase = (m_currentPhase == User.P1) ? User.P2 : User.P1;
-                    //m_turnIndex = c_numberOfTurnsInAPhase;
-                    //if (e_startPhase != null) e_startPhase(m_currentPhase);
-                }
-                else
-                {
-                    m_cursor.setActive(true);
-                    m_cursor.setIndex(m_team.m_playerList[1].Index);
-
-                    //Add listener
-                    m_cursor.e_end += startPlayerTurn;
-                }
-
+                endTurn();
                 break;
             case PlayerAction.Tackle:
-                //Paint the tiles where the player can tackle
-                m_board.drawTileRadius(m_currentPlayer.Index, 1);
-
-                //Set the cursor active
-                m_cursor.setActive(true);
-                //m_cursor.e_end += tackleTo;
-                m_cursor.e_cancel += cancelMove;
-
+                tackle();
                 break;
         }
 
         GameObject.Destroy(m_currentMenu.gameObject);
+    }
+
+    private void move()
+    {
+        m_board.drawTileRadius(m_currentPlayer.Index, 3);
+
+        m_arrow.gameObject.SetActiveRecursively(true);
+        m_arrow.init(m_currentPlayer.Index, (m_currentPlayer.isFliped ? -1 : 1));
+
+        m_arrow.e_end += startMove;
+        m_arrow.e_cancel += cancelMove;
     }
 
     private void startMove(List<Vector2> pTileIndexList)
@@ -157,11 +116,39 @@ public class TeamUserController : TeamController
         m_arrow.e_cancel -= cancelMove;
 
         m_currentPlayer.move(pTileIndexList);
-        //m_currentPlayer.moveFinishedEvent += currentPlayerMoveFinished;
 
         ApplicationFactory.instance.m_messageBus.PlayerMoveEnded += playerMoveEnded;
 
         m_board.clearTileRadius();
+    }
+
+    private void cancelMove()
+    {
+        m_arrow.e_end -= startMove;
+        m_arrow.e_cancel -= cancelMove;
+
+        showPlayerMenu();
+        m_board.clearTileRadius();
+    }
+
+    private void playerMoveEnded(Player pPlayer)
+    {
+        ApplicationFactory.instance.m_messageBus.PlayerMoveEnded -= playerMoveEnded;
+        showPlayerMenu();
+    }
+
+    private void pass()
+    {
+        m_cursor.setIndex(m_currentPlayer.Index);
+        m_cursor.gameObject.SetActiveRecursively(true);
+
+        //Draw board tiles
+        m_board.drawPass(m_currentPlayer.Index, m_currentPlayer.Index);
+
+        //Add listeners
+        m_cursor.e_move += drawPassTiles;
+        m_cursor.e_end += startPass;
+        m_arrow.e_cancel += cancelPass;
     }
 
     private void startPass(Vector2 pIndex)
@@ -170,25 +157,50 @@ public class TeamUserController : TeamController
         m_cursor.e_end -= startPass;
         m_arrow.e_cancel -= cancelMove;
 
-        m_cursor.setActive(false);
-
-        //Shoot the ball
         m_currentPlayer.passTo(pIndex, m_board.currentTileList);
 
-        //Remove board tiles
         m_board.clearTileRadius();
+        m_cursor.setActive(false);
 
         ApplicationFactory.instance.m_messageBus.BallPassEnded += ballPassEnded;
     }
 
-    private void playerMoveEnded(Player pPlayer)
+    private void cancelPass()
     {
-        startTurn();
+        m_cursor.e_move -= drawPassTiles;
+        m_cursor.e_end -= startPass;
+        m_arrow.e_cancel -= cancelPass;
+
+        showPlayerMenu();
+        m_board.clearTileRadius();
+        m_cursor.setActive(false);
     }
 
     private void ballPassEnded(Ball pBall)
     {
-        startTurn();
+        m_gameCamera.moveTo(m_currentPlayer.Index);
+
+        ApplicationFactory.instance.m_messageBus.BallPassEnded -= ballPassEnded;
+        m_gameCamera.CameraMovedToTargetEnded += ballPassEndCameraMoveEnded;
+    }
+
+    private void ballPassEndCameraMoveEnded()
+    {
+        m_gameCamera.CameraMovedToTargetEnded -= ballPassEndCameraMoveEnded;
+        showPlayerMenu();
+    }
+
+    private void shoot()
+    {
+        m_cursor.setIndex(m_currentPlayer.Index);
+        m_cursor.gameObject.SetActiveRecursively(true);
+
+        //Draw board tiles
+        m_board.drawShoot(m_currentPlayer.Index);
+
+        //Add listeners
+        m_cursor.e_end += startShot;
+        m_cursor.e_cancel += cancelShot;
     }
 
     private void startShot(Vector2 pIndex)
@@ -202,6 +214,20 @@ public class TeamUserController : TeamController
         m_currentPlayer.shootTo();
     }
 
+    private void cancelShot()
+    {
+        m_arrow.e_end -= startMove;
+        m_arrow.e_cancel -= cancelMove;
+
+        showPlayerMenu();
+        m_board.clearTileRadius();
+    }
+
+    private void shotEnded(Ball pBall)
+    {
+        showPlayerMenu();
+    }
+
     private void drawPassTiles(Vector2 pIndex)
     {
         //Remove board tiles
@@ -211,31 +237,86 @@ public class TeamUserController : TeamController
         m_board.drawPass(m_currentPlayer.Index, pIndex);
     }
 
-    private void cancelBox()
+    private void tackle()
     {
-        //Remove listeners
-        m_currentMenu.e_selected -= optionSelected;
-        m_currentMenu.e_cancel -= cancelBox;
+        m_cursor.setIndex(m_currentPlayer.Index);
+        m_cursor.setActive(true);
 
-        m_currentMenu.gameObject.SetActiveRecursively(false);
+        m_board.drawTileRadius(m_currentPlayer.Index, 1);
 
-        //setCursorActive();
+        m_cursor.e_end += startTackle;
+        m_cursor.e_cancel += cancelTackle;
     }
 
-    private void cancelMove()
+    private void startTackle(Vector2 pIndex)
     {
-        //Remove listeners
-        m_arrow.e_end -= startMove;
-        m_arrow.e_cancel -= cancelMove;
+        m_cursor.e_end -= startTackle;
+        m_cursor.e_cancel -= cancelTackle;
 
-        //showPlayerMenu();
+        Player playerToTackle = m_board.getPlayerAtIndex(pIndex);
+
+        bool isDribble = UnityEngine.Random.RandomRange(0.0f, 1.0f) > 0.5f;
+
+        TackleInfo tackleInfo = new TackleInfo();
+        tackleInfo.m_isDribble = isDribble;
+        tackleInfo.m_jumpPlayer = playerToTackle;
+        tackleInfo.m_tacklePlayer = m_currentPlayer;
+        tackleInfo.m_jumpToIndex = m_currentPlayer.Index;
+        tackleInfo.m_tackleToIndex = pIndex;
+
+        m_game.playerTackleTo(tackleInfo);
+        m_game.tackleEnded += playerTackleEnded;
+
+        m_board.clearTileRadius();
+        m_cursor.setActive(false);
     }
 
-    private void currentPlayerMoveFinished()
+    private void cancelTackle()
     {
-        //Remove listeners
-        m_currentPlayer.moveFinishedEvent -= currentPlayerMoveFinished;
+        m_cursor.e_end -= startTackle;
+        m_arrow.e_cancel -= cancelTackle;
 
         showPlayerMenu();
+
+        m_board.clearTileRadius();
+        m_cursor.setActive(false);
+    }
+
+    private void playerTackleEnded()
+    {
+        m_game.tackleEnded -= playerTackleEnded;
+        showPlayerMenu();
+    }
+
+    private void cancelPlayerMenu()
+    {
+        m_currentMenu.e_selected -= optionSelected;
+        m_currentMenu.e_cancel -= cancelPlayerMenu;
+
+        GameObject.Destroy(m_currentMenu.gameObject);
+
+        startTurn();
+    }
+
+    private void endTurn()
+    {
+        GameObject.Destroy(m_currentMenu.gameObject);
+
+        m_currentPlayer.endTurn();
+
+        m_turnIndex--;
+        if (m_turnIndex == 0)
+        {
+            endPhase();
+        }
+        else
+        {
+            startTurn();
+        }
+    }
+
+    private void endPhase()
+    {
+        ApplicationFactory.instance.m_messageBus.dispatchUserPhaseEnded(m_team);
     }
 }

@@ -10,7 +10,7 @@ public class Team
     public List<Player> m_playerList;
 
     //Player with the ball
-    private Player m_playerWithTheBall;
+    public Player m_playerWithTheBall;
 
     //Opponent team
     public Team m_opponentTeam;
@@ -19,13 +19,13 @@ public class Team
 
     private TeamController m_teamController;
 
-    public Team(Board pBoard)
+    public Team(Game pGame, GameCamera pGameCamera, Board pBoard)
     {
         m_playerList = new List<Player>();
 
         //Initialize team controller
         m_teamController = new TeamUserController();
-        m_teamController.init(pBoard, this);
+        m_teamController.init(pGame, pGameCamera, pBoard, this);
     }
 
     public void tacklePlayer(Player opponent)
@@ -58,12 +58,6 @@ public class Team
         if (pPlayer.isGK)
         {
             m_gk = pPlayer;
-        }
-
-        //Check if the player has the ball
-        if (pPlayer.hasBall)
-        {
-            m_playerWithTheBall = pPlayer;
         }
     }
 

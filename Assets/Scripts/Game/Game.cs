@@ -5,6 +5,8 @@ using System.Collections.Generic;
 
 public class Game : MonoBehaviour
 {
+    public Action tackleEnded;
+
     //CONSTANTS
     private const int c_numberOfTurnsInAPhase = 3;
 
@@ -63,8 +65,8 @@ public class Game : MonoBehaviour
         m_camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<GameCamera>();
 
         //Instantiate teams
-        m_team1 = new Team(m_board);
-        m_team2 = new Team(m_board);
+        m_team1 = new Team(this, m_camera, m_board);
+        m_team2 = new Team(this, m_camera, m_board);
 
         m_team1.m_opponentTeam = m_team2;
         m_team2.m_opponentTeam = m_team1;
@@ -120,14 +122,40 @@ public class Game : MonoBehaviour
         //Set game mode
         m_gameMode = GameModes.P1VsP2;
 
-        PlayerTurnAnimation playerTurnAnimation = GUIManager.instance.createPlayerTurnAnimation();
-        playerTurnAnimation.init();
-        playerTurnAnimation.e_end += startPlayerTurn;
+        startUserPhase();
 
         //Add listeners
         ApplicationFactory.instance.m_messageBus.PlayerMovedToTile += currentPlayerMovedToTile;
         ApplicationFactory.instance.m_messageBus.BallMovedToTile += ballMovedToTile;
         ApplicationFactory.instance.m_messageBus.BallPassEnded += ballPassEnded;
+
+        ApplicationFactory.instance.m_messageBus.PlayerTurnEnded += playerTurnEnd;
+        ApplicationFactory.instance.m_messageBus.UserPhaseEnded += userPhaseEnd;
+    }
+
+    private void userPhaseEnd(Team pTeam)
+    {
+        if (m_currentTeam == m_team1) m_currentTeam = m_team2;
+        else m_currentTeam = m_team1;
+
+        startUserPhase();
+    }
+
+    private void playerTurnEnd(Player pPlayer)
+    {
+
+    }
+
+    private void startUserPhase()
+    {
+        PlayerTurnAnimation playerTurnAnimation = GUIManager.instance.createPlayerTurnAnimation();
+        playerTurnAnimation.init();
+        playerTurnAnimation.e_end += startPlayerTurn;
+    }
+
+    private void startPlayerTurn()
+    {
+        m_currentTeam.startTurn();
     }
 
     private void currentPlayerMovedToTile(Player pPlayer)
@@ -139,9 +167,10 @@ public class Game : MonoBehaviour
 
             FX02 fx = ApplicationFactory.instance.m_fxManager.createFX02(tacklePlayer.transform.position);
             fx.init();
+            fx.e_end += startPlayerTackleTo;
 
             bool isDribble = UnityEngine.Random.RandomRange(0.0f, 1.0f) > 0.5f;
-
+            
             m_tackleInfo = new TackleInfo();
             m_tackleInfo.m_isDribble = isDribble;
             m_tackleInfo.m_jumpPlayer = pPlayer;
@@ -152,19 +181,32 @@ public class Game : MonoBehaviour
             {
                 if (pPlayer.isMoveEnded) m_tackleInfo.m_jumpToIndex = tacklePlayer.Index;
                 else m_tackleInfo.m_jumpToIndex = pPlayer.nextMoveTileIndex;
-
-                fx.e_end += tackleDribbleStart;
             }
             else
             {
                 m_tackleInfo.m_jumpToIndex = tacklePlayer.Index;
-                fx.e_end += tackleNoDribbleStart;
             }
         }
         else
         {
             pPlayer.moveToNextSquare();
         }
+    }
+
+    private void startPlayerTackleTo()
+    {
+        playerTackleTo(m_tackleInfo);
+
+        if (m_tackleInfo.m_isDribble) tackleEnded += tackleDribbleEnd;
+        else tackleEnded += tackleNoDribbleEnd;
+    }
+
+    public void playerTackleTo(TackleInfo pTackleInfo)
+    {
+        m_tackleInfo = pTackleInfo;
+
+        if (m_tackleInfo.m_isDribble) tackleDribbleStart();
+        else tackleNoDribbleStart();
     }
 
     private void ballMovedToTile(Ball pBall)
@@ -290,18 +332,20 @@ public class Game : MonoBehaviour
         {
             m_tackleInfo.m_jumpPlayer.takeBall();
             m_tackleInfo.m_tacklePlayer.setBall(m_ball);
+        }
 
-            m_tackleInfo.m_jumpPlayer.jumpEnd += jumpNoDribbleEnd;
-        }
-        else
-        {
-            m_tackleInfo.m_jumpPlayer.jumpEnd += jumpDribbleEnd;
-        }
+        m_tackleInfo.m_jumpPlayer.jumpEnd += jumpEnd;
     }
 
-    private void jumpNoDribbleEnd()
+    private void jumpEnd()
     {
-        m_tackleInfo.m_jumpPlayer.jumpEnd -= jumpNoDribbleEnd;
+        m_tackleInfo.m_jumpPlayer.jumpEnd -= jumpEnd;
+        if (tackleEnded != null) tackleEnded();
+    }
+
+    private void tackleNoDribbleEnd()
+    {
+        tackleEnded -= tackleNoDribbleEnd;
 
         //Set new turn
         PlayerTurnAnimation playerTurnAnimation = GUIManager.instance.createPlayerTurnAnimation();
@@ -309,10 +353,9 @@ public class Game : MonoBehaviour
         playerTurnAnimation.e_end += startPlayerTurn;
     }
 
-    private void jumpDribbleEnd()
+    private void tackleDribbleEnd()
     {
-        m_tackleInfo.m_jumpPlayer.jumpEnd -= jumpDribbleEnd;
-
+        tackleEnded -= tackleDribbleEnd;
         m_tackleInfo.m_jumpPlayer.moveToNextSquare();
     }
 
@@ -414,14 +457,6 @@ public class Game : MonoBehaviour
     }
 
     #endregion
-
-    /// <summary>
-    /// Starts next player turn
-    /// </summary>
-    private void startPlayerTurn()
-    {
-        m_currentTeam.startTurn();
-    }
 
     private bool isPlayerSelectable()
     {

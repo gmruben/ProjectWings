@@ -55,9 +55,6 @@ public class Player : MonoBehaviour
         m_stats = new PlayerStats();
         m_stats.m_dribble = 10;
         m_stats.m_tackle = 10;
-
-        //Add listeners
-        //ApplicationFactory.instance.m_messageBus.PlayerMoveEnded += playerControllerMoveFinished;
     }
 
     public void setIndex(Vector2 pIndex)
@@ -85,6 +82,7 @@ public class Player : MonoBehaviour
     public void setBall(Ball pBall)
     {
         m_ball = pBall;
+        m_team.m_playerWithTheBall = this;
 
         //Make it player's child and put it in position
         m_ball.transform.parent = transform;
@@ -94,16 +92,14 @@ public class Player : MonoBehaviour
         m_ball.Index = playerController.Index;
     }
 
-    /// <summary>
-    /// Pass the ball to a tile
-    /// </summary>
-    /// <param name="pIndex">Tile index</param>
     public void passTo(Vector2 pIndex, List<Vector2> pTileList)
     {
         m_ball.passTo(this, pIndex, pTileList);
 
         //Set camera target
         m_camera.setTarget(m_ball.transform);
+
+        takeBall();
 
         //Set the player has already performed an action
         m_hasPerformedAction = true;
@@ -120,7 +116,7 @@ public class Player : MonoBehaviour
         ApplicationFactory.instance.m_messageBus.CurrentSceneEnded -= performShot;
 
         playerAnimation.playAnimation(m_team.ID + (m_isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Shoot);
-        playerAnimation.animationFinished += shootAnimationFinished;
+        playerAnimation.animationFinished += shootAnimationEnded;
 
         //Tile index of the goal
         Vector2 goalIndex = new Vector2(18, 6);
@@ -131,26 +127,9 @@ public class Player : MonoBehaviour
         m_hasPerformedAction = true;
     }
 
-    public void blockTo()
+    private void shootAnimationEnded()
     {
-        m_hasReacted = true;
-    }
-
-    /// <summary>
-    /// Shoot the ball to a tile
-    /// </summary>
-    /// <param name="pIndex">Tile index</param>
-    /*private void playerControllerMoveFinished()
-    {
-        m_board.playerToTile(this);
-
-        if (moveFinishedEvent != null) moveFinishedEvent();
-    }*/
-
-    private void shootAnimationFinished()
-    {
-        //Remove listeners
-        playerAnimation.animationFinished -= shootAnimationFinished;
+        playerAnimation.animationFinished -= shootAnimationEnded;
 
         m_ball.shootTo(this, m_tileIndexToShoot);
 
@@ -158,11 +137,17 @@ public class Player : MonoBehaviour
         m_camera.setTarget(m_ball.transform);
     }
 
+    public void blockTo()
+    {
+        m_hasReacted = true;
+    }
+
     public bool isGonnaTackle()
     {
         return true; // UnityEngine.Random.Range(0.0f, 1.0f) > 0.5f;
     }
 
+    //Player controller wrapper
     public void moveToNextSquare()
     {
         StartCoroutine(playerController.moveToNextSquare());
@@ -198,6 +183,12 @@ public class Player : MonoBehaviour
     {
         m_ball.transform.parent = null;
         m_ball = null;
+    }
+
+    public void endTurn()
+    {
+        m_hasEndedTurn = true;
+        renderer.material.SetColor("_TintColor", new Color(0.5f, 0.5f, 0.5f));
     }
 
     #region PROPERTIES
