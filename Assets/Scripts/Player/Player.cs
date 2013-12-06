@@ -23,7 +23,6 @@ public class Player : MonoBehaviour
 
     public bool m_hasMoved = false;
     public bool m_hasPerformedAction = false;
-    public bool m_hasEndedTurn = false;
     public bool m_hasReacted = false;
 
     private Team m_team;
@@ -183,12 +182,6 @@ public class Player : MonoBehaviour
     {
         m_ball.transform.parent = null;
         m_ball = null;
-    }
-
-    public void endTurn()
-    {
-        m_hasEndedTurn = true;
-        renderer.material.SetColor("_TintColor", new Color(0.5f, 0.5f, 0.5f));
     }
 
     #region PROPERTIES

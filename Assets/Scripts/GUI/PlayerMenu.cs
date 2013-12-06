@@ -8,6 +8,8 @@ public class PlayerMenu : MonoBehaviour
     public Action e_cancel;
 
     public BoxText[] m_optionList;
+
+    [HideInInspector]
     public int[] m_actionList;
 
     private int m_currentOptionIndex;
@@ -19,7 +21,7 @@ public class PlayerMenu : MonoBehaviour
 
     public void init(Player pPlayer)
     {
-        transform.position = new Vector3(-(80 + (32 / 2)), -25, 0);
+        transform.position = new Vector3(-(80 + (32 / 2)), 0, 0);
 
         m_hasFinishedAnimation = false;
 
@@ -28,56 +30,36 @@ public class PlayerMenu : MonoBehaviour
         m_actionList = new int[4];
 
         m_actionList[0] = PlayerAction.Move;
-        m_optionList[0].text = "Move";
+        m_optionList[0].text = ApplicationFactory.instance.m_languageManager.getString("Move");
         m_optionList[0].isActive = !pPlayer.m_hasMoved;
 
         if (pPlayer.hasBall)
         {
-            m_actionList[1] = PlayerAction.Pass;
-            m_optionList[1].text = "Pass";
-            m_optionList[1].isActive = !pPlayer.m_hasPerformedAction;
-            m_actionList[2] = PlayerAction.Shoot;
-            m_optionList[2].text = "Shoot";
-            m_optionList[2].isActive = !pPlayer.m_hasPerformedAction;
+            m_actionList[1] = PlayerAction.Dribble;
+            m_optionList[1].text = ApplicationFactory.instance.m_languageManager.getString("Dribble");
+            m_optionList[1].isActive = pPlayer.hasBall && !pPlayer.m_hasPerformedAction;
         }
         else
         {
             m_actionList[1] = PlayerAction.Tackle;
-            m_optionList[1].text = "Tackle";
-            m_optionList[1].isActive = !pPlayer.m_hasPerformedAction;
-            m_optionList[2].text = "";
-            m_optionList[2].isActive = false;
+            m_optionList[1].text = ApplicationFactory.instance.m_languageManager.getString("Tackle");
+            m_optionList[1].isActive = (pPlayer.team.m_playerWithTheBall == null);
         }
 
-        m_actionList[3] = PlayerAction.EndTurn;
-        m_optionList[3].text = "End";
-        m_optionList[3].isActive = true;
+        m_actionList[2] = PlayerAction.Pass;
+        m_optionList[2].text = ApplicationFactory.instance.m_languageManager.getString("Pass");
+        m_optionList[2].isActive = pPlayer.hasBall && !pPlayer.m_hasPerformedAction;
+
+        m_actionList[3] = PlayerAction.Shoot;
+        m_optionList[3].text = ApplicationFactory.instance.m_languageManager.getString("Shoot");
+        m_optionList[3].isActive = pPlayer.hasBall && !pPlayer.m_hasPerformedAction;
 
         //Highlight the first active option
-        while(!m_optionList[m_currentOptionIndex].isActive)
+        while (!m_optionList[m_currentOptionIndex].isActive)
         {
             m_currentOptionIndex++;
         }
         m_optionList[m_currentOptionIndex].isHighlighted = true;
-    }
-
-    public void setGKData()
-    {
-        m_currentOptionIndex = 0;
-        m_numOptions = 2;
-
-        m_actionList = new int[m_numOptions];
-
-        m_actionList[0] = PlayerAction.Punch;
-        m_optionList[0].text = "Punch";
-        m_optionList[0].isActive = true;
-
-        m_actionList[1] = PlayerAction.Catch;
-        m_optionList[1].text = "Catch";
-        m_optionList[1].isActive = true;
-
-        m_optionList[2].enabled = false;
-        m_optionList[3].enabled = false;
     }
 
     void Update()
@@ -87,7 +69,7 @@ public class PlayerMenu : MonoBehaviour
             transform.position += new Vector3(Time.deltaTime * 150, 0, 0);
             if (transform.position.x > (32 / 2) - 82)
             {
-                transform.position = new Vector3((32 / 2) - 82, -25, 0);
+                transform.position = new Vector3((32 / 2) - 82, 0, 0);
                 m_hasFinishedAnimation = true;
             }
         }
@@ -139,10 +121,8 @@ public class PlayerMenu : MonoBehaviour
 public class PlayerAction
 {
     public const int Move = 0;
-    public const int Pass = 1;
-    public const int Shoot = 2;
-    public const int Tackle = 3;
-    public const int EndTurn = 4;
-    public const int Punch = 5;
-    public const int Catch = 6;
+    public const int Dribble = 1;
+    public const int Tackle = 2;
+    public const int Pass = 3;
+    public const int Shoot = 4;
 }

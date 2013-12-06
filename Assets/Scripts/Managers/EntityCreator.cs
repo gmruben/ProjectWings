@@ -5,7 +5,7 @@ public class EntityCreator
 {
     public Cursor createCursor()
     {
-        Cursor cursor = (GameObject.Instantiate(ApplicationFactory.instance.m_cursor) as GameObject).GetComponent<Cursor>();
+        Cursor cursor = (GameObject.Instantiate(ApplicationFactory.instance.m_cursorPrefab) as GameObject).GetComponent<Cursor>();
         return cursor;
     }
 

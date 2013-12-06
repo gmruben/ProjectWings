@@ -78,6 +78,7 @@
      <Compile Include="Assets\Scripts\Managers\FXManager.cs" />
      <Compile Include="Assets\Scripts\Managers\GUIManager.cs" />
      <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+     <Compile Include="Assets\Scripts\Managers\LanguageManager.cs" />
      <Compile Include="Assets\Scripts\Managers\MessageBus.cs" />
      <Compile Include="Assets\Scripts\Managers\SceneManager.cs" />
      <Compile Include="Assets\Scripts\Player\Player.cs" />

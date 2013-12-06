@@ -4,7 +4,7 @@ using System.Collections;
 public class ApplicationFactory : MonoBehaviour
 {
     //ENTITY PREFABS
-    public GameObject m_cursor;
+    public GameObject m_cursorPrefab;
     public GameObject m_arrow;
     public GameObject m_emptyExSpritePrefab;
 
@@ -12,6 +12,7 @@ public class ApplicationFactory : MonoBehaviour
 
     public MessageBus m_messageBus;
     public EntityCreator m_entityCreator;
+    public LanguageManager m_languageManager;
 
     [HideInInspector]
     public FXManager m_fxManager;
@@ -49,6 +50,7 @@ public class ApplicationFactory : MonoBehaviour
     {
         m_messageBus = new MessageBus();
         m_entityCreator = new EntityCreator();
+        m_languageManager = new LanguageManager();
 
         m_fxManager = GameObject.Find("FXManager").GetComponent<FXManager>();
     }

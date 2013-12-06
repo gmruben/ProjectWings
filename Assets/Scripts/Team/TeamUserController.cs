@@ -49,8 +49,8 @@ public class TeamUserController : TeamController
             //Get the player on the tile
             m_currentPlayer = m_board.getPlayerAtIndex(index);
 
-            //If player hasn't ended his turn yet and it is on my team
-            if (!m_currentPlayer.m_hasEndedTurn && m_currentPlayer.team.m_user == m_team.m_user)
+            //If the player is in my team
+            if (m_currentPlayer.team.m_user == m_team.m_user)
             {
                 //Remove listeners
                 m_cursor.e_end -= startPlayerTurn;                
@@ -87,9 +87,9 @@ public class TeamUserController : TeamController
             case PlayerAction.Shoot:
                 shoot();
                 break;
-            case PlayerAction.EndTurn:
-                endTurn();
-                break;
+            //case PlayerAction.EndTurn:
+            //    endTurn();
+            //    break;
             case PlayerAction.Tackle:
                 tackle();
                 break;
@@ -127,14 +127,17 @@ public class TeamUserController : TeamController
         m_arrow.e_end -= startMove;
         m_arrow.e_cancel -= cancelMove;
 
-        showPlayerMenu();
         m_board.clearTileRadius();
+
+        showPlayerMenu();
     }
 
     private void playerMoveEnded(Player pPlayer)
     {
         ApplicationFactory.instance.m_messageBus.PlayerMoveEnded -= playerMoveEnded;
-        showPlayerMenu();
+        
+        //showPlayerMenu();
+        endTurn();
     }
 
     private void pass()
@@ -171,9 +174,10 @@ public class TeamUserController : TeamController
         m_cursor.e_end -= startPass;
         m_arrow.e_cancel -= cancelPass;
 
-        showPlayerMenu();
         m_board.clearTileRadius();
         m_cursor.setActive(false);
+
+        showPlayerMenu();
     }
 
     private void ballPassEnded(Ball pBall)
@@ -187,7 +191,8 @@ public class TeamUserController : TeamController
     private void ballPassEndCameraMoveEnded()
     {
         m_gameCamera.CameraMovedToTargetEnded -= ballPassEndCameraMoveEnded;
-        showPlayerMenu();
+        //showPlayerMenu();
+        endTurn();
     }
 
     private void shoot()
@@ -225,7 +230,8 @@ public class TeamUserController : TeamController
 
     private void shotEnded(Ball pBall)
     {
-        showPlayerMenu();
+        //showPlayerMenu();
+        endTurn();
     }
 
     private void drawPassTiles(Vector2 pIndex)
@@ -285,7 +291,8 @@ public class TeamUserController : TeamController
     private void playerTackleEnded()
     {
         m_game.tackleEnded -= playerTackleEnded;
-        showPlayerMenu();
+        //showPlayerMenu();
+        endTurn();
     }
 
     private void cancelPlayerMenu()
@@ -300,10 +307,6 @@ public class TeamUserController : TeamController
 
     private void endTurn()
     {
-        GameObject.Destroy(m_currentMenu.gameObject);
-
-        m_currentPlayer.endTurn();
-
         m_turnIndex--;
         if (m_turnIndex == 0)
         {
@@ -312,6 +315,7 @@ public class TeamUserController : TeamController
         else
         {
             startTurn();
+            ApplicationFactory.instance.m_messageBus.dispatchPlayerTurnEnded(m_turnIndex);
         }
     }
 

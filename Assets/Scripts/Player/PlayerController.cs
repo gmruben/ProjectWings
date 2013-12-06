@@ -104,7 +104,11 @@ public class PlayerController : MonoBehaviour
 
     public void performJump(Vector2 pJumpToIndex)
     {
-        m_playerAnimation.playAnimation(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
+        List<string> animationNameList = new List<string>();
+        animationNameList.Add(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Jump);
+        animationNameList.Add(m_player.team.ID + (m_player.isGK ? "_gk_" : "_player_") + PlayerAnimationIds.Idle);
+
+        m_playerAnimation.playAnimation(animationNameList);
         StartCoroutine(jumpCoroutine(pJumpToIndex));
     }
 

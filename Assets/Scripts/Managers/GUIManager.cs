@@ -40,14 +40,6 @@ public class GUIManager : MonoBehaviour
         return menu;
     }
 
-    public PlayerMenu showGKContMenu()
-    {
-        m_playerMenu = (GameObject.Instantiate(m_playerMenuPrefab) as GameObject).GetComponent<PlayerMenu>();
-        m_playerMenu.setGKData();
-
-        return m_playerMenu;
-    }
-
     public YesNoMenu showYesNoMenu()
     {
         m_yesNoMenu = (GameObject.Instantiate(m_yesNoMenuPrefab) as GameObject).GetComponent<YesNoMenu>();

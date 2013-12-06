@@ -1,10 +1,12 @@
 using UnityEngine;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 public class PlayerAnimation : MonoBehaviour
 {
     private exSpriteAnimation m_animation;
+    private List<string> m_animationNameList;
 
     //EVENTS
     public event Action animationFinished;
@@ -12,6 +14,7 @@ public class PlayerAnimation : MonoBehaviour
     public void init()
     {
         m_animation = GetComponent<exSpriteAnimation>();
+        m_animationNameList = new List<string>();
 
         //Add listeners
         ApplicationFactory.instance.m_messageBus.TackleBattleStart += tackleBattleStart;
@@ -19,7 +22,15 @@ public class PlayerAnimation : MonoBehaviour
 
     public void playAnimation(string pAnimationName)
     {
+        m_animationNameList.Clear();
         m_animation.Play(pAnimationName);
+    }
+
+    public void playAnimation(List<string> pAnimationNameList)
+    {
+        m_animationNameList = pAnimationNameList;
+        m_animation.Play(m_animationNameList[0]);
+        m_animationNameList.RemoveAt(0);
     }
 
     private void onAnimationFinished(string pAnimationName)
@@ -27,6 +38,11 @@ public class PlayerAnimation : MonoBehaviour
         if (animationFinished != null)
         {
             animationFinished();
+        }
+
+        if (m_animationNameList.Count > 0)
+        {
+            playAnimation(m_animationNameList);
         }
     }
 

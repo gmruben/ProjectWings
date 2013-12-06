@@ -141,7 +141,7 @@ public class Game : MonoBehaviour
         startUserPhase();
     }
 
-    private void playerTurnEnd(Player pPlayer)
+    private void playerTurnEnd(int pTurnIndex)
     {
 
     }

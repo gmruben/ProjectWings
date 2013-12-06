@@ -14,7 +14,7 @@ public class MessageBus
     public Action<Ball> BallMovedToTile;
     public Action<Ball> BallPassEnded;
 
-    public Action<Player> PlayerTurnEnded;
+    public Action<int> PlayerTurnEnded;
     public Action<Team> UserPhaseEnded;
 
     public void dispatchTackleBattleStart()
@@ -52,9 +52,9 @@ public class MessageBus
         if (BallPassEnded != null) BallPassEnded(pBall);
     }
 
-    public void dispatchPlayerTurnEnded(Player pPlayer)
+    public void dispatchPlayerTurnEnded(int pTurnIndex)
     {
-        if (PlayerTurnEnded != null) PlayerTurnEnded(pPlayer);
+        if (PlayerTurnEnded != null) PlayerTurnEnded(pTurnIndex);
     }
 
     public void dispatchUserPhaseEnded(Team pTeam)

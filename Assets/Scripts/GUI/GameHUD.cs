@@ -4,29 +4,32 @@ using System.Collections;
 public class GameHUD : MonoBehaviour
 {
     public Game m_game;
-
     public GameObject[] m_balls;
+
+    private int numTurns;
 
     void Start()
     {
+        numTurns = 5;
+
         //Add listeners
-        m_game.e_endTurn += endTurn;
-        m_game.e_startPhase += startPhase;
+        ApplicationFactory.instance.m_messageBus.PlayerTurnEnded += endTurn;
+        ApplicationFactory.instance.m_messageBus.UserPhaseEnded += startPhase;
     }
 
-    private void startPhase(int pPhase)
+    private void startPhase(Team pTeam)
     {
-        for (int i = 0; i < m_balls.Length; i++)
+        for (int i = 0; i < numTurns; i++)
         {
             m_balls[i].active = true;
         }
     }
 
-    private void endTurn(int pTurnsLeft)
+    private void endTurn(int pTurnIndex)
     {
-        for (int i = 0; i < m_balls.Length; i++)
+        for (int i = 0; i < numTurns; i++)
         {
-            m_balls[i].active = i < pTurnsLeft;
+            m_balls[i].active = (i <= (numTurns - pTurnIndex));
         }
     }
 }
